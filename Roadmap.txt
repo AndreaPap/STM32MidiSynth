@@ -1,0 +1,5 @@
+1 ) Generare suono con pwm
+2 ) Decodificare midi
+3 ) Creare motore audio
+4 ) Decidere specifiche scheda
+5 ) Progetto e produzione scheda
