@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "stdint.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -40,6 +40,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+TIM_HandleTypeDef htim11;
 
 /* USER CODE BEGIN PV */
 
@@ -48,6 +49,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_TIM11_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -86,7 +88,20 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_TIM11_Init();
   /* USER CODE BEGIN 2 */
+  //TIM11->ARR 	= 	65535;
+  //TIM11->CCR1 	= 	16384;
+  // PER INIZIALIZZARE CORRETTAMENTE GUARDA IL REFERENCE MANUAL SOTTO LA SEZIONE PWM
+  // TIENI APERTA UNA SCHEDA SULLA DESCRIZIONE CHE SPIEGA QUALI REGISTRI INIZIALIZZARE E IN QUALE ORDINE
+  // NELL'ALTRA SCHEDA APRI I SINGOLI REGISTRI E CONFIGURA
+  TIM11->ARR 	=	255;
+  TIM11->CCR1	= 	0;
+  TIM11->CCMR1 	|= 	0x68;
+  TIM11->CR1 	|= 	0x80;
+  TIM11->EGR 	|= 	0x01;
+  TIM11->CCER 	|= 	0x01;
+  TIM11->CR1 	|=	0x01;
 
   /* USER CODE END 2 */
 
@@ -95,7 +110,8 @@ int main(void)
   while (1)
   {
 	  HAL_GPIO_TogglePin( LED_GPIO_Port, LED_Pin );
-	  HAL_Delay( 500 );
+	  TIM11->CCR1 = TIM11->CCR1 == 255 ? 0 : TIM11->CCR1 + 1;
+	  HAL_Delay( 10 );
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -150,6 +166,52 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief TIM11 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM11_Init(void)
+{
+
+  /* USER CODE BEGIN TIM11_Init 0 */
+
+  /* USER CODE END TIM11_Init 0 */
+
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM11_Init 1 */
+
+  /* USER CODE END TIM11_Init 1 */
+  htim11.Instance = TIM11;
+  htim11.Init.Prescaler = 0;
+  htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim11.Init.Period = 255;
+  htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim11.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_Init(&htim11) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim11, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM11_Init 2 */
+
+  /* USER CODE END TIM11_Init 2 */
+  HAL_TIM_MspPostInit(&htim11);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -165,6 +227,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
