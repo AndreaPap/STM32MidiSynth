@@ -21,7 +21,7 @@
 #include "stdint.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "AudioEngine.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,7 +43,7 @@
 TIM_HandleTypeDef htim11;
 
 /* USER CODE BEGIN PV */
-
+float Sine[ 128 ] = { 0.5f, 0.5245338f, 0.5490086f, 0.5733652f, 0.5975452f, 0.6214901f, 0.6451423f, 0.6684449f, 0.6913417f, 0.7137775f, 0.7356984f, 0.7570514f, 0.7777851f, 0.7978497f, 0.8171966f, 0.8357795f, 0.8535534f, 0.8704756f, 0.8865052f, 0.9016038f, 0.9157348f, 0.9288643f, 0.9409606f, 0.9519946f, 0.9619398f, 0.970772f, 0.9784702f, 0.9850156f, 0.9903926f, 0.9945883f, 0.9975924f, 0.9993977f, 1.0f, 0.9993977f, 0.9975924f, 0.9945883f, 0.9903926f, 0.9850156f, 0.9784702f, 0.970772f, 0.9619398f, 0.9519946f, 0.9409606f, 0.9288643f, 0.9157348f, 0.9016038f, 0.8865052f, 0.8704756f, 0.8535534f, 0.8357795f, 0.8171966f, 0.7978497f, 0.7777851f, 0.7570514f, 0.7356984f, 0.7137775f, 0.6913417f, 0.6684449f, 0.6451423f, 0.6214901f, 0.5975452f, 0.5733652f, 0.5490086f, 0.5245338f, 0.5f, 0.4754662f, 0.4509914f, 0.4266348f, 0.4024548f, 0.3785099f, 0.3548577f, 0.3315551f, 0.3086583f, 0.2862225f, 0.2643016f, 0.2429486f, 0.2222149f, 0.2021503f, 0.1828034f, 0.1642205f, 0.1464466f, 0.1295244f, 0.1134948f, 0.0983962f, 0.0842652f, 0.0711357f, 0.0590394f, 0.0480054f, 0.0380602f, 0.029228f, 0.0215298f, 0.0149844f, 0.0096074f, 0.0054117f, 0.0024076f, 0.0006023f, 0.0f, 0.0006023f, 0.0024076f, 0.0054117f, 0.0096074f, 0.0149844f, 0.0215298f, 0.029228f, 0.0380602f, 0.0480054f, 0.0590394f, 0.0711357f, 0.0842652f, 0.0983962f, 0.1134948f, 0.1295244f, 0.1464466f, 0.1642205f, 0.1828034f, 0.2021503f, 0.2222149f, 0.2429486f, 0.2643016f, 0.2862225f, 0.3086583f, 0.3315551f, 0.3548577f, 0.3785099f, 0.4024548f, 0.4266348f, 0.4509914f, 0.4754662f };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -51,7 +51,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM11_Init(void);
 /* USER CODE BEGIN PFP */
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -103,15 +102,23 @@ int main(void)
   TIM11->CCER 	|= 	0x01;
   TIM11->CR1 	|=	0x01;
 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  AudioEngine_TypeState AudioEngine;
+  AudioEngine.Sample = Sine;
+  AudioEngine.SampleSize = 128;
+  AudioEngine.PhaseIncrement = 0.05632f; // Time / Periodo = Index / SampleSize ->  ( Frequenza / SampleRate ) * SampleSize = Delta fase
+  AudioEngine.Phase = 0;
   while (1)
   {
-	  HAL_GPIO_TogglePin( LED_GPIO_Port, LED_Pin );
-	  TIM11->CCR1 = TIM11->CCR1 == 255 ? 0 : TIM11->CCR1 + 1;
-	  HAL_Delay( 10 );
+
+	  TIM11->CCR1 = ( uint32_t )( AudioEngine_Sample( &AudioEngine ) * 255 );
+	  //HAL_GPIO_TogglePin( LED_GPIO_Port, LED_Pin );
+	  //TIM11->CCR1 = TIM11->CCR1 == 255 ? 0 : TIM11->CCR1 + 1;
+	  //HAL_Delay( 10 );
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
