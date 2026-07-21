@@ -1,8 +1,10 @@
 1 ) Generare suono con pwm
 	1 ) Pilotare uscita PWM 		X
 	2 ) Filtrare uscita PWM			X
-	3 ) Tabella per sinusoide
-	4 ) Ascoltare effetto sonoro 
+	3 ) Tabella per sinusoide		X
+	4 ) Tabella per forme varie		X
+	5 ) Valutare accumulatore di fase intero a 32 bit e solo in ultimo passaggio a float
+	6 ) Ascoltare effetto sonoro 
 2 ) Decodificare midi
 3 ) Creare motore audio
 4 ) Decidere specifiche scheda
