@@ -60,19 +60,23 @@ Engine_TypeSampleState Engine2;
 Engine_TypeSampleState Engine3;
 Engine_TypeSampleState Engine4;
 Engine_TypeSampleState Engine5;
+
+Engine_TypeSineGeneratorState SineGenerator;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void HAL_TIM_PeriodElapsedCallback( TIM_HandleTypeDef* htim )
 {
-	float Sum = (
+	/*float Sum = (
 			Engine_SampleStep( &Engine1 ) +
 			Engine_SampleStep( &Engine2 ) +
 			Engine_SampleStep( &Engine3 ) +
 			Engine_SampleStep( &Engine4 ) +
 			Engine_SampleStep( &Engine5 )
-			) / 5.0f;
+			) / 5.0f;*/
+
+	float Sum = Engine_SineGeneratorStep( &SineGenerator );
 
 	TIM11->CCR1 = ( uint32_t )( Sum * 255 );
 }
@@ -130,11 +134,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  Engine_SampleInit( &Engine1, Saw, 		128, 220.0f, 0.10f,  48000.0f );
+  /*Engine_SampleInit( &Engine1, Saw, 		128, 220.0f, 0.10f,  48000.0f );
   Engine_SampleInit( &Engine2, Saw, 		128, 220.0f, 0.05f,  48000.0f );
   Engine_SampleInit( &Engine3, Sine, 		128, 220.0f, 0.00f,  48000.0f );
   Engine_SampleInit( &Engine4, Saw, 		128, 440.0f, 0.02f,  48000.0f );
-  Engine_SampleInit( &Engine5, Saw, 		128, 440.0f, 0.12f,  48000.0f );
+  Engine_SampleInit( &Engine5, Saw, 		128, 440.0f, 0.12f,  48000.0f );*/
+
+  Engine_SineGeneratorInit( &SineGenerator, 1000, 48000 );
 
   HAL_TIM_Base_Start_IT( &htim10 );
   while (1)

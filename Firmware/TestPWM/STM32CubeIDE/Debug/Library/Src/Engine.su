@@ -1,2 +1,4 @@
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:9:6:Engine_SampleInit	32	static
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:18:7:Engine_SampleStep	40	static
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:38:6:Engine_SineGeneratorInit	24	static
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:46:7:Engine_SineGeneratorStep	32	static

@@ -32,3 +32,25 @@ float Engine_SampleStep( Engine_TypeSampleState* SampleState )
 
 	return Output;
 }
+
+
+
+void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState, float Frequency, float SampleRate )
+{
+	// Prepara il sistema e lo inizializza come se avesse ricevuto un impulso allo step precedente, così step non deve valutare l'input
+	SineGeneratorState->A1 = 2 * cosf( 2 * PI * Frequency / SampleRate );
+	SineGeneratorState->Y1 = sinf( 2 * PI * Frequency / SampleRate );
+	SineGeneratorState->Y2 = 0.0f;
+}
+
+float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* SineGeneratorState )
+{
+	float Y1 = ( SineGeneratorState->A1 * SineGeneratorState->Y1 ) - SineGeneratorState->Y2;
+	float Out = ( Y1 * 0.5f ) + 0.5f;
+	float Y2 = SineGeneratorState->Y1;
+
+	SineGeneratorState->Y1 = Y1;
+	SineGeneratorState->Y2 = Y2;
+
+	return Out;
+}
