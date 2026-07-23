@@ -3,9 +3,13 @@
 	2 ) Filtrare uscita PWM			X
 	3 ) Tabella per sinusoide		X
 	4 ) Tabella per forme varie		X
-	5 ) Valutare accumulatore di fase intero a 32 bit e solo in ultimo passaggio a float
+	5 ) Sinusoide con sistema lineare X
+	6 ) RC in uscita per fc circa a 200 Hz ( simile a -4.5 dB oct )
 	6 ) Ascoltare effetto sonoro 
 2 ) Decodificare midi
 3 ) Creare motore audio
 4 ) Decidere specifiche scheda
 5 ) Progetto e produzione scheda
+
+
+

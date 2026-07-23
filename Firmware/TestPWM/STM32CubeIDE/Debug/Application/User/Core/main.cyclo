@@ -1,7 +1,6 @@
-/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:69:6:HAL_TIM_PeriodElapsedCallback	1
-/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:89:5:main	1
-/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:164:6:SystemClock_Config	3
-/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:211:13:MX_TIM10_Init	2
-/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:242:13:MX_TIM11_Init	4
-/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:288:13:MX_GPIO_Init	1
-/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:330:6:Error_Handler	1
+/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:72:6:TimerCallback	1
+/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:86:5:main	1
+/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:160:6:SystemClock_Config	3
+/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:207:13:MX_TIM11_Init	4
+/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:253:13:MX_GPIO_Init	1
+/home/andrea/Progetti/STM32MidiSynth/Firmware/TestPWM/Core/Src/main.c:295:6:Error_Handler	1

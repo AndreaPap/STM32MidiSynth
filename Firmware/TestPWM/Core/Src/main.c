@@ -40,7 +40,6 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-TIM_HandleTypeDef htim10;
 TIM_HandleTypeDef htim11;
 
 /* USER CODE BEGIN PV */
@@ -53,32 +52,30 @@ float Sawtooth[ 128 ] = { 0.0f, 0.007874f, 0.015748f, 0.023622f, 0.0314961f, 0.0
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM11_Init(void);
-static void MX_TIM10_Init(void);
 /* USER CODE BEGIN PFP */
-Engine_TypeSampleState Engine1;
-Engine_TypeSampleState Engine2;
-Engine_TypeSampleState Engine3;
-Engine_TypeSampleState Engine4;
-Engine_TypeSampleState Engine5;
 
 Engine_TypeSineGeneratorState SineGenerator;
+Engine_TypeSawGeneratorState SawGenerator;
+Engine_TypeSawtoothGeneratorState SawtoothGenerator;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HAL_TIM_PeriodElapsedCallback( TIM_HandleTypeDef* htim )
+/*void HAL_TIM_PeriodElapsedCallback( TIM_HandleTypeDef* htim )
 {
-	/*float Sum = (
-			Engine_SampleStep( &Engine1 ) +
-			Engine_SampleStep( &Engine2 ) +
-			Engine_SampleStep( &Engine3 ) +
-			Engine_SampleStep( &Engine4 ) +
-			Engine_SampleStep( &Engine5 )
-			) / 5.0f;*/
+
 
 	float Sum = Engine_SineGeneratorStep( &SineGenerator );
 
-	TIM11->CCR1 = ( uint32_t )( Sum * 255 );
+
+}*/
+void TimerCallback( void )
+{
+	// leggi il file _it in fondo che spiega come collegare la callback anche se mx non la genera
+	//TIM11->CCR1 	= ( uint32_t )( Engine_SineGeneratorStep( &SineGenerator ) * 1024 );
+	//TIM11->CCR1 	= ( uint32_t )( Engine_SawGeneratorStep( &SawGenerator ) * 1024 );
+	TIM11->CCR1 	= ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator ) * 1024 );
+	TIM11->SR		&=	0xFFFFFFFE;
 }
 /* USER CODE END 0 */
 
@@ -112,37 +109,36 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM11_Init();
-  MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
   //TIM11->ARR 	= 	65535;
   //TIM11->CCR1 	= 	16384;
   // PER INIZIALIZZARE CORRETTAMENTE GUARDA IL REFERENCE MANUAL SOTTO LA SEZIONE PWM
   // TIENI APERTA UNA SCHEDA SULLA DESCRIZIONE CHE SPIEGA QUALI REGISTRI INIZIALIZZARE E IN QUALE ORDINE
-  // NELL'ALTRA SCHEDA APRI I SINGOLI REGISTRI E CONFIGURA
-  TIM11->ARR 	=	255;
-  TIM11->CCR1	= 	0;
-  TIM11->CCMR1 	|= 	0x68;
-  TIM11->CR1 	|= 	0x80;
-  TIM11->EGR 	|= 	0x01;
-  TIM11->CCER 	|= 	0x01;
-  TIM11->CR1 	|=	0x01;
+  // NELL'ALTRA SCHEDA APRI I SINGOLI REGISTRI E CONFIGURA.
+  // pg. 381 conteggio da 0 ad ARR quindi ARR + 1 impulsi.
+  // pg. 415 condizioni di commutazione ccr = 0 -> pwm = 0 %, ccr = arr + 1 -> pwm = 100 %
 
-  TIM10->CR1 	|=	0x01;
+  TIM11->ARR    = 	1023;       	// Periodo del PWM (Auto Reload Register)
+  TIM11->CCR1   = 	0;           	// Duty cycle iniziale = 0%
+  TIM11->CCMR1 	|= 	0x68;        	// CH1 in modalità PWM1 + preload CCR1
+  TIM11->CR1   	|= 	0x80;        	// Abilita preload di ARR (ARPE)
+  TIM11->EGR   	|= 	0x01;        	// Forza un evento di update per caricare i registri
+  TIM11->CCER  	|= 	0x01;        	// Abilita l'uscita del canale 1
+  TIM11->DIER  	|= 	0x01;        	// Abilita interrupt di Update (UIE)
+  TIM11->SR    	&= 	0xFFFFFFFE;  	// Azzera il flag di Update (UIF)
+  NVIC->ISER[0] |= 	0x04000000; 	// Abilita l'interrupt TIM1_TRG_COM_TIM11 nel NVIC
+  TIM11->CR1   	|= 	0x01;        	// Avvia il timer (CEN)
 
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  /*Engine_SampleInit( &Engine1, Saw, 		128, 220.0f, 0.10f,  48000.0f );
-  Engine_SampleInit( &Engine2, Saw, 		128, 220.0f, 0.05f,  48000.0f );
-  Engine_SampleInit( &Engine3, Sine, 		128, 220.0f, 0.00f,  48000.0f );
-  Engine_SampleInit( &Engine4, Saw, 		128, 440.0f, 0.02f,  48000.0f );
-  Engine_SampleInit( &Engine5, Saw, 		128, 440.0f, 0.12f,  48000.0f );*/
 
-  Engine_SineGeneratorInit( &SineGenerator, 1000, 48000 );
+  //Engine_SineGeneratorInit( &SineGenerator, 50, 82031.25f );
+  //Engine_SawGeneratorInit( &SawGenerator, 50, 82031.25f );
+  Engine_SawtoothGeneratorInit( &SawtoothGenerator, 50, 82031.25f );
 
-  HAL_TIM_Base_Start_IT( &htim10 );
   while (1)
   {
 
@@ -204,37 +200,6 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief TIM10 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM10_Init(void)
-{
-
-  /* USER CODE BEGIN TIM10_Init 0 */
-
-  /* USER CODE END TIM10_Init 0 */
-
-  /* USER CODE BEGIN TIM10_Init 1 */
-
-  /* USER CODE END TIM10_Init 1 */
-  htim10.Instance = TIM10;
-  htim10.Init.Prescaler = 0;
-  htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim10.Init.Period = 1749;
-  htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim10.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM10_Init 2 */
-
-  /* USER CODE END TIM10_Init 2 */
-
-}
-
-/**
   * @brief TIM11 Initialization Function
   * @param None
   * @retval None
@@ -254,7 +219,7 @@ static void MX_TIM11_Init(void)
   htim11.Instance = TIM11;
   htim11.Init.Prescaler = 0;
   htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim11.Init.Period = 255;
+  htim11.Init.Period = 1023;
   htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim11.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim11) != HAL_OK)

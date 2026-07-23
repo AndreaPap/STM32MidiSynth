@@ -2,3 +2,7 @@
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:18:7:Engine_SampleStep	40	static
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:38:6:Engine_SineGeneratorInit	24	static
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:46:7:Engine_SineGeneratorStep	32	static
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:58:6:Engine_SawGeneratorInit	24	static
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:66:7:Engine_SawGeneratorStep	32	static
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:85:6:Engine_SawtoothGeneratorInit	24	static
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:92:7:Engine_SawtoothGeneratorStep	24	static
