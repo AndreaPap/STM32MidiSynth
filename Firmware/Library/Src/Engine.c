@@ -38,6 +38,7 @@ float Engine_SampleStep( Engine_TypeSampleState* SampleState )
 void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState, float Frequency, float SampleRate )
 {
 	// Prepara il sistema e lo inizializza come se avesse ricevuto un impulso allo step precedente, così step non deve valutare l'input
+	SineGeneratorState->Step = 0;
 	SineGeneratorState->A1 = 2 * cosf( 2 * PI * Frequency / SampleRate );
 	SineGeneratorState->Y1 = sinf( 2 * PI * Frequency / SampleRate );
 	SineGeneratorState->Y2 = 0.0f;
@@ -55,12 +56,14 @@ float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* SineGeneratorStat
 	return Out;
 }
 
-void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* SawGeneratorState, float Frequency, float SampleRate )
+void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* SawGeneratorState, float Frequency, float InitialPhase, float SampleRate )
 {
-	SawGeneratorState->Up = true;
-	SawGeneratorState->RelTime = 0.0f;
+	float HalfPeriod = 1.0f / ( 2.0f * Frequency );
+	float RelTime = InitialPhase / Frequency;
+	SawGeneratorState->Up = RelTime < HalfPeriod;
+	SawGeneratorState->RelTime = RelTime < HalfPeriod ? RelTime : RelTime - HalfPeriod;
 	SawGeneratorState->Step = 1.0f / SampleRate;
-	SawGeneratorState->HalfPeriod = 1.0f / ( 2.0f * Frequency );
+	SawGeneratorState->HalfPeriod = HalfPeriod;
 }
 
 float Engine_SawGeneratorStep( Engine_TypeSawGeneratorState* SawGeneratorState )
@@ -82,9 +85,9 @@ float Engine_SawGeneratorStep( Engine_TypeSawGeneratorState* SawGeneratorState )
 	return Out;
 }
 
-void Engine_SawtoothGeneratorInit( Engine_TypeSawtoothGeneratorState* SawtoothGeneratorState, float Frequency, float SampleRate )
+void Engine_SawtoothGeneratorInit( Engine_TypeSawtoothGeneratorState* SawtoothGeneratorState, float Frequency, float InitialPhase, float SampleRate )
 {
-	SawtoothGeneratorState->RelTime = 0.0f;
+	SawtoothGeneratorState->RelTime = InitialPhase / Frequency;
 	SawtoothGeneratorState->Step = 1.0f / SampleRate;
 	SawtoothGeneratorState->Period = 1.0f / Frequency;
 }

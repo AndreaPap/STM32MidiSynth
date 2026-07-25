@@ -32,6 +32,7 @@ float Engine_SampleStep( Engine_TypeSampleState* State );
 // ricavando per comparazione l'equazione alle differenze finite
 typedef struct
 {
+	uint8_t Step;
 	float A1;
 	float Y1;
 	float Y2;
@@ -51,7 +52,7 @@ typedef struct
 	float HalfPeriod;
 } Engine_TypeSawGeneratorState;
 
-void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* SawGeneratorState, float Frequency, float SampleRate );
+void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* SawGeneratorState, float Frequency, float InitialPhase, float SampleRate );
 float Engine_SawGeneratorStep( Engine_TypeSawGeneratorState* SawGeneratorState );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ typedef struct
 	float Period;
 } Engine_TypeSawtoothGeneratorState;
 
-void Engine_SawtoothGeneratorInit( Engine_TypeSawtoothGeneratorState* SawtoothGeneratorState, float Frequency, float SampleRate );
+void Engine_SawtoothGeneratorInit( Engine_TypeSawtoothGeneratorState* SawtoothGeneratorState, float Frequency, float InitialPhase, float SampleRate );
 float Engine_SawtoothGeneratorStep( Engine_TypeSawtoothGeneratorState* SawtoothGeneratorState );
 
 #endif /* LIBRARY_INC_ENGINE_H_ */
