@@ -11,7 +11,7 @@
 - Introduci fase iniziale per 
 	generatori semplici				X
 - Metti generatori onda quadra		
-- Metti fase iniziale seno
+- Metti fase iniziale seno			X
 	
 	6 ) Ascoltare effetto sonoro 
 2 ) Decodificare midi

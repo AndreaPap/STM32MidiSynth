@@ -32,14 +32,13 @@ float Engine_SampleStep( Engine_TypeSampleState* State );
 // ricavando per comparazione l'equazione alle differenze finite
 typedef struct
 {
-	uint8_t Step;
-	float A1;
+	float B1;
 	float Y1;
 	float Y2;
 
 } Engine_TypeSineGeneratorState;
 
-void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState, float Frequency, float SampleRate );
+void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState, float Frequency, float InitialPhase, float SampleRate );
 float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* SineGeneratorState );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

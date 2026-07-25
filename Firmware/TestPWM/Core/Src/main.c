@@ -54,7 +54,8 @@ static void MX_GPIO_Init(void);
 static void MX_TIM11_Init(void);
 /* USER CODE BEGIN PFP */
 
-Engine_TypeSineGeneratorState SineGenerator;
+Engine_TypeSineGeneratorState SineGenerator1;
+Engine_TypeSineGeneratorState SineGenerator2;
 Engine_TypeSawGeneratorState SawGenerator1;
 Engine_TypeSawGeneratorState SawGenerator2;
 Engine_TypeSawtoothGeneratorState SawtoothGenerator1;
@@ -74,9 +75,9 @@ Engine_TypeSawtoothGeneratorState SawtoothGenerator2;
 void TimerCallback( void )
 {
 	// leggi il file _it in fondo che spiega come collegare la callback anche se mx non la genera
-	//TIM11->CCR1 	= ( uint32_t )( Engine_SineGeneratorStep( &SineGenerator ) * 1024 );
+	TIM11->CCR1 	= ( ( ( uint32_t )( Engine_SineGeneratorStep( &SineGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_SineGeneratorStep( &SineGenerator2 ) * 1024 ) ) ) / 2;
 	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_SawGeneratorStep( &SawGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_SawGeneratorStep( &SawGenerator2 ) * 1024 ) ) ) / 2;
-	TIM11->CCR1 	= ( ( ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator2 ) * 1024 ) ) ) / 2;
+	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator2 ) * 1024 ) ) ) / 2;
 	//TIM11->CCR1 	= ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator ) * 1024 );
 	TIM11->SR		&=	0xFFFFFFFE;
 }
@@ -138,12 +139,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  //Engine_SineGeneratorInit( &SineGenerator, 1000, 0.5, 82031.25f );
+  Engine_SineGeneratorInit( &SineGenerator1, 440, 0.0, 82031.25f );
+  Engine_SineGeneratorInit( &SineGenerator2, 440, 0.1, 82031.25f );
   //Engine_SawGeneratorInit( &SawGenerator1, 50, 0.0, 82031.25f );
   //Engine_SawGeneratorInit( &SawGenerator2, 50, 0.5, 82031.25f );
-  Engine_SawtoothGeneratorInit( &SawtoothGenerator1, 440, 0.0, 82031.25f );
-  Engine_SawtoothGeneratorInit( &SawtoothGenerator2, 440, 0.3, 82031.25f );
-  //Engine_SawtoothGeneratorInit( &SawtoothGenerator, 1000, 0.5, 82031.25f );
+  //Engine_SawtoothGeneratorInit( &SawtoothGenerator1, 440, 0.0, 82031.25f );
+  //Engine_SawtoothGeneratorInit( &SawtoothGenerator2, 440, 0.3, 82031.25f );
 
   while (1)
   {
