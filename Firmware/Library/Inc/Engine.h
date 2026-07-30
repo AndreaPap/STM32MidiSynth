@@ -21,9 +21,10 @@ typedef struct
 
 	float PhaseIncrement;
 	float Phase;			// fase attuale tra 0 e SampleSize
-} Engine_TypeSampleState;
+}
+Engine_TypeSampleState;
 
-void Engine_SampleInit( Engine_TypeSampleState* SampleState, float* Sample, uint16_t SampleSize, float Frequency, float InitialPhase, float SampleRate );
+void Engine_SampleInit( Engine_TypeSampleState* State, float* Sample, uint16_t SampleSize, float Frequency, float InitialPhase, float SampleRate );
 float Engine_SampleStep( Engine_TypeSampleState* State );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,11 +36,11 @@ typedef struct
 	float B1;
 	float Y1;
 	float Y2;
+}
+Engine_TypeSineGeneratorState;
 
-} Engine_TypeSineGeneratorState;
-
-void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState, float Frequency, float InitialPhase, float SampleRate );
-float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* SineGeneratorState );
+void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* State, float Frequency, float InitialPhase, float SampleRate );
+float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* State );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,10 +50,11 @@ typedef struct
 	float RelTime;
 	float Step;
 	float HalfPeriod;
-} Engine_TypeSawGeneratorState;
+}
+Engine_TypeSawGeneratorState;
 
-void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* SawGeneratorState, float Frequency, float InitialPhase, float SampleRate );
-float Engine_SawGeneratorStep( Engine_TypeSawGeneratorState* SawGeneratorState );
+void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* State, float Frequency, float InitialPhase, float SampleRate );
+float Engine_SawGeneratorStep( Engine_TypeSawGeneratorState* State );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef struct
@@ -60,14 +62,38 @@ typedef struct
 	float RelTime;
 	float Step;
 	float Period;
-} Engine_TypeSawtoothGeneratorState;
+}
+Engine_TypeSawtoothGeneratorState;
 
-void Engine_SawtoothGeneratorInit( Engine_TypeSawtoothGeneratorState* SawtoothGeneratorState, float Frequency, float InitialPhase, float SampleRate );
-float Engine_SawtoothGeneratorStep( Engine_TypeSawtoothGeneratorState* SawtoothGeneratorState );
+void Engine_SawtoothGeneratorInit( Engine_TypeSawtoothGeneratorState* State, float Frequency, float InitialPhase, float SampleRate );
+float Engine_SawtoothGeneratorStep( Engine_TypeSawtoothGeneratorState* State );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef struct
 {
-} Engine_TypeADSRGeneratorState;
+	bool Pressed;
+	float Y1;
+	uint8_t Phase;	// 0 attack, 1 decay, 2 sustain, 3 release
+	float RelTime;
+	float Step;
+
+	float Attack;
+	float AttackB1;
+	float AttackY1;
+
+	float Decay;
+	float DecayB1;
+	float DecayY1;
+
+	float Sustain;
+
+	float Release;
+	float ReleaseB1;
+	float ReleaseY1;
+}
+Engine_TypeADSRGeneratorState;
+
+void Engine_ADSRGeneratorInit( Engine_TypeADSRGeneratorState* State, float Attack, float Decay, float Sustain, float Release, float SampleRate );
+float Engine_ADSRGeneratorStep( Engine_TypeADSRGeneratorState* State, bool Pressed );
 
 #endif /* LIBRARY_INC_ENGINE_H_ */

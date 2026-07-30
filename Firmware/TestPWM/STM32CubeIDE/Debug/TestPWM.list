@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  0000400c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00007581  00000000  00000000  0000403c  2**0
+ 12 .debug_info   0000773f  00000000  00000000  0000403c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 0000142b  00000000  00000000  0000b5bd  2**0
+ 13 .debug_abbrev 0000142d  00000000  00000000  0000b77b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000860  00000000  00000000  0000c9e8  2**3
+ 14 .debug_aranges 00000870  00000000  00000000  0000cba8  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000665  00000000  00000000  0000d248  2**0
+ 15 .debug_rnglists 00000673  00000000  00000000  0000d418  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00015949  00000000  00000000  0000d8ad  2**0
+ 16 .debug_macro  00015949  00000000  00000000  0000da8b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00008ad1  00000000  00000000  000231f6  2**0
+ 17 .debug_line   00008bd5  00000000  00000000  000233d4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008abf1  00000000  00000000  0002bcc7  2**0
+ 18 .debug_str    0008aca1  00000000  00000000  0002bfa9  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000b68b8  2**0
+ 19 .comment      00000043  00000000  00000000  000b6c4a  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00002404  00000000  00000000  000b68fc  2**2
+ 20 .debug_frame  00002450  00000000  00000000  000b6c90  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000007d  00000000  00000000  000b8d00  2**0
+ 21 .debug_line_str 0000007d  00000000  00000000  000b90e0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -5218,7 +5218,7 @@ static void TIM_OC4_SetConfig(TIM_TypeDef *TIMx, const TIM_OC_InitTypeDef *OC_Co
 
 
 
-void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState, float Frequency, float InitialPhase, float SampleRate )
+void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* State, float Frequency, float InitialPhase, float SampleRate )
 {
  8001f9c:	b580      	push	{r7, lr}
  8001f9e:	b084      	sub	sp, #16
@@ -5228,7 +5228,7 @@ void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState
  8001fa8:	edc7 0a01 	vstr	s1, [r7, #4]
  8001fac:	ed87 1a00 	vstr	s2, [r7]
 	// Prepara il sistema e lo inizializza come se avesse ricevuto un impulso allo step 0 e fosse trascorso 1 step ( ingresso non più influente )
-	SineGeneratorState->Y2 = sinf( InitialPhase * 2.0f * PI );
+	State->Y2 = sinf( InitialPhase * 2.0f * PI );
  8001fb0:	edd7 7a01 	vldr	s15, [r7, #4]
  8001fb4:	ee77 7aa7 	vadd.f32	s15, s15, s15
  8001fb8:	ed9f 7a1e 	vldr	s14, [pc, #120]	@ 8002034 <Engine_SineGeneratorInit+0x98>
@@ -5238,7 +5238,7 @@ void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState
  8001fc8:	eef0 7a40 	vmov.f32	s15, s0
  8001fcc:	68fb      	ldr	r3, [r7, #12]
  8001fce:	edc3 7a02 	vstr	s15, [r3, #8]
-	SineGeneratorState->Y1 = sinf( 2.0f * PI * ( ( Frequency / SampleRate ) + InitialPhase ) );
+	State->Y1 = sinf( 2.0f * PI * ( ( Frequency / SampleRate ) + InitialPhase ) );
  8001fd2:	edd7 6a02 	vldr	s13, [r7, #8]
  8001fd6:	edd7 7a00 	vldr	s15, [r7]
  8001fda:	ee86 7aa7 	vdiv.f32	s14, s13, s15
@@ -5251,7 +5251,7 @@ void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState
  8001ff6:	eef0 7a40 	vmov.f32	s15, s0
  8001ffa:	68fb      	ldr	r3, [r7, #12]
  8001ffc:	edc3 7a01 	vstr	s15, [r3, #4]
-	SineGeneratorState->B1 = 2.0f * cosf( 2.0f * PI * Frequency / SampleRate );
+	State->B1 = 2.0f * cosf( 2.0f * PI * Frequency / SampleRate );
  8002000:	edd7 7a02 	vldr	s15, [r7, #8]
  8002004:	ed9f 7a0c 	vldr	s14, [pc, #48]	@ 8002038 <Engine_SineGeneratorInit+0x9c>
  8002008:	ee27 7a87 	vmul.f32	s14, s15, s14
@@ -5275,13 +5275,13 @@ void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState
 
 0800203c <Engine_SineGeneratorStep>:
 
-float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* SineGeneratorState )
+float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* State )
 {
  800203c:	b480      	push	{r7}
  800203e:	b087      	sub	sp, #28
  8002040:	af00      	add	r7, sp, #0
  8002042:	6078      	str	r0, [r7, #4]
-	float Y1 = ( SineGeneratorState->B1 * SineGeneratorState->Y1 ) - SineGeneratorState->Y2;
+	float Y1 = ( State->B1 * State->Y1 ) - State->Y2;
  8002044:	687b      	ldr	r3, [r7, #4]
  8002046:	ed93 7a00 	vldr	s14, [r3]
  800204a:	687b      	ldr	r3, [r7, #4]
@@ -5298,16 +5298,16 @@ float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* SineGeneratorStat
  800206e:	eeb6 7a00 	vmov.f32	s14, #96	@ 0x3f000000  0.5
  8002072:	ee77 7a87 	vadd.f32	s15, s15, s14
  8002076:	edc7 7a04 	vstr	s15, [r7, #16]
-	float Y2 = SineGeneratorState->Y1;
+	float Y2 = State->Y1;
  800207a:	687b      	ldr	r3, [r7, #4]
  800207c:	685b      	ldr	r3, [r3, #4]
  800207e:	60fb      	str	r3, [r7, #12]
 
-	SineGeneratorState->Y1 = Y1;
+	State->Y1 = Y1;
  8002080:	687b      	ldr	r3, [r7, #4]
  8002082:	697a      	ldr	r2, [r7, #20]
  8002084:	605a      	str	r2, [r3, #4]
-	SineGeneratorState->Y2 = Y2;
+	State->Y2 = Y2;
  8002086:	687b      	ldr	r3, [r7, #4]
  8002088:	68fa      	ldr	r2, [r7, #12]
  800208a:	609a      	str	r2, [r3, #8]

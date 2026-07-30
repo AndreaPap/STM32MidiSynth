@@ -6,3 +6,5 @@
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:69:7:Engine_SawGeneratorStep	3
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:88:6:Engine_SawtoothGeneratorInit	1
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:95:7:Engine_SawtoothGeneratorStep	2
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:107:6:Engine_ADSRGeneratorInit	1
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:126:7:Engine_ADSRGeneratorStep	9

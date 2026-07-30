@@ -6,100 +6,160 @@
  */
 #include <Engine.h>
 
-void Engine_SampleInit( Engine_TypeSampleState* SampleState, float* Sample, uint16_t SampleSize, float Frequency, float InitialPhase, float SampleRate )
+void Engine_SampleInit( Engine_TypeSampleState* State, float* Sample, uint16_t SampleSize, float Frequency, float InitialPhase, float SampleRate )
 {
 	// DeltaPhase / MaxPhase = DeltaT / Period = ( 1 / Samplerate ) / ( 1 / Frequency ) = DeltaPhase = MaxPhase * Frequency / Samplerate
-	SampleState->Sample = Sample;
-	SampleState->SampleSize = SampleSize;
-	SampleState->PhaseIncrement = ( float )SampleSize * Frequency / SampleRate;
-	SampleState->Phase = ( float )SampleSize * InitialPhase; // fase iniziale normalizzata
+	State->Sample = Sample;
+	State->SampleSize = SampleSize;
+	State->PhaseIncrement = ( float )SampleSize * Frequency / SampleRate;
+	State->Phase = ( float )SampleSize * InitialPhase; // fase iniziale normalizzata
 }
 
-float Engine_SampleStep( Engine_TypeSampleState* SampleState )
+float Engine_SampleStep( Engine_TypeSampleState* State )
 {
-	float NewPhase = SampleState->Phase + SampleState->PhaseIncrement;
-	if( NewPhase >= SampleState->SampleSize ){ NewPhase -= SampleState->SampleSize; }
+	float NewPhase = State->Phase + State->PhaseIncrement;
+	if( NewPhase >= State->SampleSize ){ NewPhase -= State->SampleSize; }
 
 	uint16_t Index0 = ( uint16_t )NewPhase;
-	uint16_t Index1 = Index0 + 1 == SampleState->SampleSize ? 0 : Index0 + 1;
+	uint16_t Index1 = Index0 + 1 == State->SampleSize ? 0 : Index0 + 1;
 
-	float S0 = SampleState->Sample[ Index0 ];
-	float S1 = SampleState->Sample[ Index1 ];
+	float S0 = State->Sample[ Index0 ];
+	float S1 = State->Sample[ Index1 ];
 
 	float Output = S0 + ( ( NewPhase - ( float )Index0 ) * ( S1 - S0 ) );
 
-	SampleState->Phase = NewPhase;
+	State->Phase = NewPhase;
 
 	return Output;
 }
 
 
 
-void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* SineGeneratorState, float Frequency, float InitialPhase, float SampleRate )
+void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* State, float Frequency, float InitialPhase, float SampleRate )
 {
 	// Prepara il sistema e lo inizializza come se avesse ricevuto un impulso allo step 0 e fosse trascorso 1 step ( ingresso non più influente )
-	SineGeneratorState->Y2 = sinf( InitialPhase * 2.0f * PI );
-	SineGeneratorState->Y1 = sinf( 2.0f * PI * ( ( Frequency / SampleRate ) + InitialPhase ) );
-	SineGeneratorState->B1 = 2.0f * cosf( 2.0f * PI * Frequency / SampleRate );
+	State->Y2 = sinf( InitialPhase * 2.0f * PI );
+	State->Y1 = sinf( 2.0f * PI * ( ( Frequency / SampleRate ) + InitialPhase ) );
+	State->B1 = 2.0f * cosf( 2.0f * PI * Frequency / SampleRate );
 
 }
 
-float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* SineGeneratorState )
+float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* State )
 {
-	float Y1 = ( SineGeneratorState->B1 * SineGeneratorState->Y1 ) - SineGeneratorState->Y2;
+	float Y1 = ( State->B1 * State->Y1 ) - State->Y2;
 	float Out = ( Y1 * 0.5f ) + 0.5f;
-	float Y2 = SineGeneratorState->Y1;
+	float Y2 = State->Y1;
 
-	SineGeneratorState->Y1 = Y1;
-	SineGeneratorState->Y2 = Y2;
+	State->Y1 = Y1;
+	State->Y2 = Y2;
 
 	return Out;
 }
 
-void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* SawGeneratorState, float Frequency, float InitialPhase, float SampleRate )
+void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* State, float Frequency, float InitialPhase, float SampleRate )
 {
 	float HalfPeriod = 1.0f / ( 2.0f * Frequency );
 	float RelTime = InitialPhase / Frequency;
-	SawGeneratorState->Up = RelTime < HalfPeriod;
-	SawGeneratorState->RelTime = RelTime < HalfPeriod ? RelTime : RelTime - HalfPeriod;
-	SawGeneratorState->Step = 1.0f / SampleRate;
-	SawGeneratorState->HalfPeriod = HalfPeriod;
+	State->Up = RelTime < HalfPeriod;
+	State->RelTime = RelTime < HalfPeriod ? RelTime : RelTime - HalfPeriod;
+	State->Step = 1.0f / SampleRate;
+	State->HalfPeriod = HalfPeriod;
 }
 
-float Engine_SawGeneratorStep( Engine_TypeSawGeneratorState* SawGeneratorState )
+float Engine_SawGeneratorStep( Engine_TypeSawGeneratorState* State )
 {
-	float NewRelTime = SawGeneratorState->RelTime + SawGeneratorState->Step;
-	bool NewUp = SawGeneratorState->Up;
+	float NewRelTime = State->RelTime + State->Step;
+	bool NewUp = State->Up;
 
-	if( NewRelTime >= SawGeneratorState->HalfPeriod )
+	if( NewRelTime >= State->HalfPeriod )
 	{
-		NewRelTime -= SawGeneratorState->HalfPeriod;
+		NewRelTime -= State->HalfPeriod;
 		NewUp = !NewUp;
 	}
 
-	float Out = NewUp ? NewRelTime / SawGeneratorState->HalfPeriod : 1.0f - ( NewRelTime / SawGeneratorState->HalfPeriod );
+	float Out = NewUp ? NewRelTime / State->HalfPeriod : 1.0f - ( NewRelTime / State->HalfPeriod );
 
-	SawGeneratorState->RelTime = NewRelTime;
-	SawGeneratorState->Up = NewUp;
+	State->RelTime = NewRelTime;
+	State->Up = NewUp;
 
 	return Out;
 }
 
-void Engine_SawtoothGeneratorInit( Engine_TypeSawtoothGeneratorState* SawtoothGeneratorState, float Frequency, float InitialPhase, float SampleRate )
+void Engine_SawtoothGeneratorInit( Engine_TypeSawtoothGeneratorState* State, float Frequency, float InitialPhase, float SampleRate )
 {
-	SawtoothGeneratorState->RelTime = InitialPhase / Frequency;
-	SawtoothGeneratorState->Step = 1.0f / SampleRate;
-	SawtoothGeneratorState->Period = 1.0f / Frequency;
+	State->RelTime = InitialPhase / Frequency;
+	State->Step = 1.0f / SampleRate;
+	State->Period = 1.0f / Frequency;
 }
 
-float Engine_SawtoothGeneratorStep( Engine_TypeSawtoothGeneratorState* SawtoothGeneratorState )
+float Engine_SawtoothGeneratorStep( Engine_TypeSawtoothGeneratorState* State )
 {
-	float NewRelTime = SawtoothGeneratorState->RelTime + SawtoothGeneratorState->Step;
+	float NewRelTime = State->RelTime + State->Step;
 
-	if( NewRelTime >= SawtoothGeneratorState->Period ){ NewRelTime -= SawtoothGeneratorState->Period; }
-	float Out = NewRelTime / SawtoothGeneratorState->Period;
+	if( NewRelTime >= State->Period ){ NewRelTime -= State->Period; }
+	float Out = NewRelTime / State->Period;
 
-	SawtoothGeneratorState->RelTime = NewRelTime;
+	State->RelTime = NewRelTime;
+
+	return Out;
+}
+
+void Engine_ADSRGeneratorInit( Engine_TypeADSRGeneratorState* State, float Attack, float Decay, float Sustain, float Release, float SampleRate )
+{
+	State->Pressed = true;
+	State->Phase = 0;
+	State->RelTime = 0.0f;
+	State->Step = 1 / SampleRate;
+
+	State->Attack = Attack;
+	State->AttackB1 = expf( -5.0f * Attack * State->Step );
+
+	State->Decay = Decay;
+	State->DecayB1 = expf( -5.0f * Decay * State->Step );
+
+	State->Sustain = Sustain;
+
+	State->Release = Release;
+	State->ReleaseB1 = expf( -5.0f * Decay * State->Step );
+}
+
+float Engine_ADSRGeneratorStep( Engine_TypeADSRGeneratorState* State, bool Pressed )
+{
+	float NewPhase = State->Phase;
+	float NewRelTime = State->RelTime;
+	float Out = 0.0f;
+
+	if( Pressed && !State->Pressed )
+	{
+		NewPhase = 0;
+		NewRelTime = 0.0f;
+	}
+	else if( !Pressed && State->Pressed )
+	{
+		NewPhase = 3;
+		NewRelTime = 0.0f;
+	}
+	else
+	{
+		NewRelTime += State->Step;
+
+		if( State->Phase == 0 && NewRelTime > State->Attack )
+		{
+			NewPhase = 1;
+			NewRelTime -= State->Attack;
+		}
+		else if( State->Phase == 1 && NewRelTime > State->Decay )
+		{
+			NewPhase = 2;
+			NewRelTime -= State->Sustain;
+		}
+	}
+
+	// Calcolo out rispetto a tempo stato e fase stato, non quelli nuovi
+
+	State->Pressed = Pressed;
+	State->Phase = NewPhase;
+	State->RelTime = NewRelTime;
 
 	return Out;
 }

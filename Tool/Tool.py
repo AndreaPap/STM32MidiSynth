@@ -37,5 +37,14 @@ def RecursiveSine( Points ):
     plot(Y)
     show()
 
-RecursiveSine( 100 )
-        
+def RecursiveExp( Points ):
+    A1 = 1 - exp( -1 )
+    B1 = 1 + exp( -1 )
+    B2 = -exp( -1 )
+    Y = [ 0, A1 ]
+    for Cur in range( 0, Points ):
+        Y.append( ( B1 * Y[ -1 ] ) + ( B2 * Y[ -2 ] )  )
+    plot( Y )
+    show()
+
+RecursiveExp( 10 )
