@@ -37,20 +37,25 @@ float Engine_SampleStep( Engine_TypeSampleState* State )
 
 void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* State, float Frequency, float InitialPhase, float SampleRate )
 {
-	// Prepara il sistema e lo inizializza come se avesse ricevuto un impulso allo step 0 e fosse trascorso 1 step ( ingresso non più influente )
-	State->Y2 = sinf( InitialPhase * 2.0f * PI );
-	State->Y1 = sinf( 2.0f * PI * ( ( Frequency / SampleRate ) + InitialPhase ) );
+	State->Init = true;
+	State->A0 = sinf( 2.0f * PI * InitialPhase );
+	State->A1 = sinf( 2.0f * PI * ( ( Frequency / SampleRate ) - InitialPhase ) );
 	State->B1 = 2.0f * cosf( 2.0f * PI * Frequency / SampleRate );
-
+	State->X1 = 0.0f;
+	State->Y2 = 0.0f;
+	State->Y1 = 0.0f;
 }
 
 float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* State )
 {
-	float Y1 = ( State->B1 * State->Y1 ) - State->Y2;
-	float Out = ( Y1 * 0.5f ) + 0.5f;
+	float X = State->Init ? 1.0f : 0.0f;
+	float Y = ( State->B1 * State->Y1 ) - State->Y2 + ( State->A0 * X ) + ( State->A1 * State->X1 );
+	float Out = ( Y * 0.5f ) + 0.5f;
 	float Y2 = State->Y1;
 
-	State->Y1 = Y1;
+	State->Init = false;
+	State->X1 = X;
+	State->Y1 = Y;
 	State->Y2 = Y2;
 
 	return Out;
@@ -104,9 +109,29 @@ float Engine_SawtoothGeneratorStep( Engine_TypeSawtoothGeneratorState* State )
 	return Out;
 }
 
+void Engine_ExpGeneratorInit( Engine_TypeExpGeneratorState* State, float Duration, float SampleRate )
+{
+	State->Init = true;
+	State->B1 = expf( -3.0f / ( SampleRate * Duration ) ); // duration a 3 tau ( decadimento a 5 % )
+	State->Y1 = 0.0f;
+}
+
+float Engine_ExpGeneratorStep( Engine_TypeExpGeneratorState* State )
+{
+	float X = State->Init ? 1.0f : 0.0f;
+	float Out;
+
+	Out = X + ( State->B1 * State->Y1 );
+
+	State->Init = false;
+	State->Y1 = Out;
+	return Out;
+}
+
 void Engine_ADSRGeneratorInit( Engine_TypeADSRGeneratorState* State, float Attack, float Decay, float Sustain, float Release, float SampleRate )
 {
 	State->Pressed = true;
+	State->Y1 = 0.0f;
 	State->Phase = 0;
 	State->RelTime = 0.0f;
 	State->Step = 1 / SampleRate;
@@ -155,7 +180,10 @@ float Engine_ADSRGeneratorStep( Engine_TypeADSRGeneratorState* State, bool Press
 		}
 	}
 
-	// Calcolo out rispetto a tempo stato e fase stato, non quelli nuovi
+	if( NewPhase == 0 )
+	{
+
+	}
 
 	State->Pressed = Pressed;
 	State->Phase = NewPhase;

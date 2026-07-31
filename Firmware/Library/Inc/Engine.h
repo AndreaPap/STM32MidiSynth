@@ -33,7 +33,11 @@ float Engine_SampleStep( Engine_TypeSampleState* State );
 // ricavando per comparazione l'equazione alle differenze finite
 typedef struct
 {
+	bool Init;
+	float A0;
+	float A1;
 	float B1;
+	float X1;
 	float Y1;
 	float Y2;
 }
@@ -71,6 +75,18 @@ float Engine_SawtoothGeneratorStep( Engine_TypeSawtoothGeneratorState* State );
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef struct
 {
+	bool Init;
+	float B1;
+	float Y1;
+}
+Engine_TypeExpGeneratorState;
+
+void Engine_ExpGeneratorInit( Engine_TypeExpGeneratorState* State, float Duration, float SampleRate );
+float Engine_ExpGeneratorStep( Engine_TypeExpGeneratorState* State );
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+typedef struct
+{
 	bool Pressed;
 	float Y1;
 	uint8_t Phase;	// 0 attack, 1 decay, 2 sustain, 3 release
@@ -79,17 +95,14 @@ typedef struct
 
 	float Attack;
 	float AttackB1;
-	float AttackY1;
 
 	float Decay;
 	float DecayB1;
-	float DecayY1;
 
 	float Sustain;
 
 	float Release;
 	float ReleaseB1;
-	float ReleaseY1;
 }
 Engine_TypeADSRGeneratorState;
 
