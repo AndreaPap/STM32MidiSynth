@@ -50,7 +50,6 @@ float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* State )
 {
 	float X = State->Init ? 1.0f : 0.0f;
 	float Y = ( State->B1 * State->Y1 ) - State->Y2 + ( State->A0 * X ) + ( State->A1 * State->X1 );
-	float Out = ( Y * 0.5f ) + 0.5f;
 	float Y2 = State->Y1;
 
 	State->Init = false;
@@ -58,7 +57,7 @@ float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* State )
 	State->Y1 = Y;
 	State->Y2 = Y2;
 
-	return Out;
+	return Y;
 }
 
 void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* State, float Frequency, float InitialPhase, float SampleRate )
@@ -82,7 +81,7 @@ float Engine_SawGeneratorStep( Engine_TypeSawGeneratorState* State )
 		NewUp = !NewUp;
 	}
 
-	float Out = NewUp ? NewRelTime / State->HalfPeriod : 1.0f - ( NewRelTime / State->HalfPeriod );
+	float Out = ( NewUp ? NewRelTime / State->HalfPeriod : 1.0f - ( NewRelTime / State->HalfPeriod ) ) - 0.5f;
 
 	State->RelTime = NewRelTime;
 	State->Up = NewUp;
@@ -102,7 +101,7 @@ float Engine_SawtoothGeneratorStep( Engine_TypeSawtoothGeneratorState* State )
 	float NewRelTime = State->RelTime + State->Step;
 
 	if( NewRelTime >= State->Period ){ NewRelTime -= State->Period; }
-	float Out = NewRelTime / State->Period;
+	float Out = ( NewRelTime / State->Period ) - 0.5f;
 
 	State->RelTime = NewRelTime;
 

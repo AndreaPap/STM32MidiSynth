@@ -73,6 +73,12 @@ Engine_TypeExpGeneratorState ExpGenerator;
 
 
 }*/
+static float Normalized2PWM( float ValueNormalized )
+{
+	// da +- 1 a 0 - 1024
+	return ( uint32_t )( ( ValueNormalized + 1.0f ) * 512.0f );
+}
+
 void TimerCallback( void )
 {
 	// leggi il file _it in fondo che spiega come collegare la callback anche se mx non la genera
@@ -83,12 +89,13 @@ void TimerCallback( void )
 	}
 	//float Out = Engine_SineGeneratorStep( &SineGenerator1 );
 	//TIM11->CCR1		= ( uint32_t )( Out * 1024 );
-	TIM11->CCR1 	= ( uint32_t )( 1024 * ( Exp * (
-			( 0.7f * Engine_SineGeneratorStep( &SineGenerator1 ) )  +
-			( 0.2f * Engine_SineGeneratorStep( &SineGenerator2 ) ) +
-			( 0.1f * Engine_SawtoothGeneratorStep( &SawtoothGenerator1 ) )
-			) )
-	);
+	TIM11->CCR1 	=
+			Normalized2PWM(
+				Exp * (
+						( 0.7f * Engine_SineGeneratorStep( &SineGenerator1 ) )  +
+						( 0.2f * Engine_SineGeneratorStep( &SineGenerator2 ) ) +
+						( 0.1f * Engine_SawtoothGeneratorStep( &SawtoothGenerator1 ) ) )
+				);
 	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_SawGeneratorStep( &SawGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_SawGeneratorStep( &SawGenerator2 ) * 1024 ) ) ) / 2;
 	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator2 ) * 1024 ) ) ) / 2;
 	//TIM11->CCR1 	= ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator ) * 1024 );
