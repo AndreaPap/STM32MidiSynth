@@ -9,4 +9,4 @@
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:112:6:Engine_ExpGeneratorInit	24	static
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:119:7:Engine_ExpGeneratorStep	24	static
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:131:6:Engine_ADSRGeneratorInit	32	static
-/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:151:7:Engine_ADSRGeneratorStep	40	static
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:148:7:Engine_ADSRGeneratorStep	48	static

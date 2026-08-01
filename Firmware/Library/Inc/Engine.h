@@ -92,17 +92,14 @@ typedef struct
 	uint8_t Phase;	// 0 attack, 1 decay, 2 sustain, 3 release
 	float RelTime;
 	float Step;
-
+	float SampleRate;
+	Engine_TypeExpGeneratorState ExpGenerator;
 	float Attack;
-	float AttackB1;
-
 	float Decay;
-	float DecayB1;
-
 	float Sustain;
-
 	float Release;
-	float ReleaseB1;
+	float AttackStart;		// valori da cui partono attack e release
+	float ReleaseStart;
 }
 Engine_TypeADSRGeneratorState;
 

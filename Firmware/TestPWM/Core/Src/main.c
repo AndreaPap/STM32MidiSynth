@@ -76,17 +76,19 @@ Engine_TypeExpGeneratorState ExpGenerator;
 void TimerCallback( void )
 {
 	// leggi il file _it in fondo che spiega come collegare la callback anche se mx non la genera
-	/*float Out = Engine_ExpGeneratorStep( &ExpGenerator );
-	if( Out < 0.045f )
+	float Exp = Engine_ExpGeneratorStep( &ExpGenerator );
+	if( Exp < 0.045f )
 	{
-		Engine_ExpGeneratorInit( &ExpGenerator, 0.1f, 82031.25f );
-	}*/
+		Engine_ExpGeneratorInit( &ExpGenerator, 1.0f, 82031.25f );
+	}
 	//float Out = Engine_SineGeneratorStep( &SineGenerator1 );
 	//TIM11->CCR1		= ( uint32_t )( Out * 1024 );
-	TIM11->CCR1 	= (
-			( ( uint32_t )( 0.7f * Engine_SineGeneratorStep( &SineGenerator1 ) * 1024 ) ) +
-			( ( uint32_t )( 0.2f * Engine_SineGeneratorStep( &SineGenerator2 ) * 1024 ) ) +
-			( ( uint32_t )( 0.1f * Engine_SawtoothGeneratorStep( &SawtoothGenerator1 ) * 1024 ) ) );
+	TIM11->CCR1 	= ( uint32_t )( 1024 * ( Exp * (
+			( 0.7f * Engine_SineGeneratorStep( &SineGenerator1 ) )  +
+			( 0.2f * Engine_SineGeneratorStep( &SineGenerator2 ) ) +
+			( 0.1f * Engine_SawtoothGeneratorStep( &SawtoothGenerator1 ) )
+			) )
+	);
 	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_SawGeneratorStep( &SawGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_SawGeneratorStep( &SawGenerator2 ) * 1024 ) ) ) / 2;
 	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator2 ) * 1024 ) ) ) / 2;
 	//TIM11->CCR1 	= ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator ) * 1024 );
@@ -156,7 +158,7 @@ int main(void)
   //Engine_SawGeneratorInit( &SawGenerator2, 50, 0.5, 82031.25f );
   Engine_SawtoothGeneratorInit( &SawtoothGenerator1, 220, 0.1, 82031.25f );
   //Engine_SawtoothGeneratorInit( &SawtoothGenerator2, 440, 0.3, 82031.25f );
-  Engine_ExpGeneratorInit( &ExpGenerator, 0.1f, 82031.25f );
+  Engine_ExpGeneratorInit( &ExpGenerator, 1.0f, 82031.25f );
 
   while (1)
   {
