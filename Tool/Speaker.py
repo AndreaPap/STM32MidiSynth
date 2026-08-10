@@ -5,11 +5,11 @@ from numpy import*
 # aggiunta di condensatore serie Cf e induttanza Lf
 # rapporto tra corrente che circola nell'induttana ( circa proporzionale alla pressione sonora prodotta ) e la tensione in ingresso
 
-Cf = 3300e-6
-Lf = 4.7e-3
-R = 6
+Cf = 2200e-6
+Lf = 0
+R = 3.2
 L = 0.5e-3
-C = 175e-12
+C = 0.5e-9
 
 W = 2 * pi * geomspace( 0.1, 80000, 1000 )
 
