@@ -6,7 +6,7 @@
  */
 #include <Engine.h>
 
-void Engine_SampleInit( Engine_TypeSampleState* State, float* Sample, uint16_t SampleSize, float Frequency, float InitialPhase, float SampleRate )
+void Engine_GeneratorSampleInit( Engine_TypeStateGeneratorSample* State, float* Sample, uint16_t SampleSize, float Frequency, float InitialPhase, float SampleRate )
 {
 	// DeltaPhase / MaxPhase = DeltaT / Period = ( 1 / Samplerate ) / ( 1 / Frequency ) = DeltaPhase = MaxPhase * Frequency / Samplerate
 	State->Sample = Sample;
@@ -15,7 +15,7 @@ void Engine_SampleInit( Engine_TypeSampleState* State, float* Sample, uint16_t S
 	State->Phase = ( float )SampleSize * InitialPhase; // fase iniziale normalizzata
 }
 
-float Engine_SampleStep( Engine_TypeSampleState* State )
+float Engine_GeneratorSampleStep( Engine_TypeStateGeneratorSample* State )
 {
 	float NewPhase = State->Phase + State->PhaseIncrement;
 	if( NewPhase >= State->SampleSize ){ NewPhase -= State->SampleSize; }
@@ -35,7 +35,7 @@ float Engine_SampleStep( Engine_TypeSampleState* State )
 
 
 
-void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* State, float Frequency, float InitialPhase, float SampleRate )
+void Engine_GeneratorSineInit( Engine_TypeStateGeneratorSine* State, float Frequency, float InitialPhase, float SampleRate )
 {
 	State->Init = true;
 	State->A0 = sinf( 2.0f * PI * InitialPhase );
@@ -46,7 +46,7 @@ void Engine_SineGeneratorInit( Engine_TypeSineGeneratorState* State, float Frequ
 	State->Y1 = 0.0f;
 }
 
-float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* State )
+float Engine_GeneratorSineStep( Engine_TypeStateGeneratorSine* State )
 {
 	float X = State->Init ? 1.0f : 0.0f;
 	float Y = ( State->B1 * State->Y1 ) - State->Y2 + ( State->A0 * X ) + ( State->A1 * State->X1 );
@@ -60,7 +60,7 @@ float Engine_SineGeneratorStep( Engine_TypeSineGeneratorState* State )
 	return Y;
 }
 
-void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* State, float Frequency, float InitialPhase, float SampleRate )
+void Engine_GeneratorSawInit( Engine_TypeStateGeneratorSaw* State, float Frequency, float InitialPhase, float SampleRate )
 {
 	float HalfPeriod = 1.0f / ( 2.0f * Frequency );
 	float RelTime = InitialPhase / Frequency;
@@ -70,7 +70,7 @@ void Engine_SawGeneratorInit( Engine_TypeSawGeneratorState* State, float Frequen
 	State->HalfPeriod = HalfPeriod;
 }
 
-float Engine_SawGeneratorStep( Engine_TypeSawGeneratorState* State )
+float Engine_GeneratorSawStep( Engine_TypeStateGeneratorSaw* State )
 {
 	float NewRelTime = State->RelTime + State->Step;
 	bool NewUp = State->Up;
@@ -89,14 +89,14 @@ float Engine_SawGeneratorStep( Engine_TypeSawGeneratorState* State )
 	return Out;
 }
 
-void Engine_SawtoothGeneratorInit( Engine_TypeSawtoothGeneratorState* State, float Frequency, float InitialPhase, float SampleRate )
+void Engine_GeneratorSawtoothInit( Engine_TypeStateGeneratorSawtooth* State, float Frequency, float InitialPhase, float SampleRate )
 {
 	State->RelTime = InitialPhase / Frequency;
 	State->Step = 1.0f / SampleRate;
 	State->Period = 1.0f / Frequency;
 }
 
-float Engine_SawtoothGeneratorStep( Engine_TypeSawtoothGeneratorState* State )
+float Engine_GeneratorSawtoothStep( Engine_TypeStateGeneratorSawtooth* State )
 {
 	float NewRelTime = State->RelTime + State->Step;
 
@@ -108,14 +108,14 @@ float Engine_SawtoothGeneratorStep( Engine_TypeSawtoothGeneratorState* State )
 	return Out;
 }
 
-void Engine_ExpGeneratorInit( Engine_TypeExpGeneratorState* State, float Duration, float SampleRate )
+void Engine_GeneratorExpInit( Engine_TypeStateGeneratorExp* State, float Duration, float SampleRate )
 {
 	State->Init = true;
 	State->B1 = expf( -3.0f / ( SampleRate * Duration ) ); // duration a 3 tau ( decadimento a 5 % )
 	State->Y1 = 0.0f;
 }
 
-float Engine_ExpGeneratorStep( Engine_TypeExpGeneratorState* State )
+float Engine_GeneratorExpStep( Engine_TypeStateGeneratorExp* State )
 {
 	float X = State->Init ? 1.0f : 0.0f;
 	float Out;
@@ -127,7 +127,7 @@ float Engine_ExpGeneratorStep( Engine_TypeExpGeneratorState* State )
 	return Out;
 }
 
-void Engine_ADSRGeneratorInit( Engine_TypeADSRGeneratorState* State, float Attack, float Decay, float Sustain, float Release, float SampleRate )
+void Engine_GeneratorADSRInit( Engine_TypeStateGeneratorADSR* State, float Attack, float Decay, float Sustain, float Release, float SampleRate )
 {
 	State->Pressed = true;
 	State->Y1 = 0.0f;
@@ -135,7 +135,7 @@ void Engine_ADSRGeneratorInit( Engine_TypeADSRGeneratorState* State, float Attac
 	State->RelTime = 0.0f;
 	State->Step = 1 / SampleRate;
 	State->SampleRate = SampleRate;
-	Engine_ExpGeneratorInit( &State->ExpGenerator, Attack, SampleRate );
+	Engine_GeneratorExpInit( &State->ExpGenerator, Attack, SampleRate );
 	State->Attack = Attack;
 	State->Decay = Decay;
 	State->Sustain = Sustain;
@@ -144,14 +144,14 @@ void Engine_ADSRGeneratorInit( Engine_TypeADSRGeneratorState* State, float Attac
 	State->ReleaseStart = 0.0f;
 }
 
-float Engine_ADSRGeneratorStep( Engine_TypeADSRGeneratorState* State, bool Pressed )
+float Engine_GeneratorADSRStep( Engine_TypeStateGeneratorADSR* State, bool Pressed )
 {
 	uint8_t NewPhase = State->Phase;
 	float NewRelTime = State->RelTime;
 	float NewAttackStart = State->AttackStart;
 	float NewReleaseStart = State->ReleaseStart;
 	float Out = 0.0f;
-	Engine_TypeExpGeneratorState NewExpGenerator = State->ExpGenerator;
+	Engine_TypeStateGeneratorExp NewExpGenerator = State->ExpGenerator;
 
 	if( Pressed && !State->Pressed ) 		// da fase generica a attack per pressione
 	{
@@ -185,13 +185,24 @@ float Engine_ADSRGeneratorStep( Engine_TypeADSRGeneratorState* State, bool Press
 	{
 		switch ( NewPhase )
 		{
-			case 0: Engine_ExpGeneratorInit( &NewExpGenerator, State->Attack, State->SampleRate );	break;
-			case 1: Engine_ExpGeneratorInit( &NewExpGenerator, State->Decay, State->SampleRate );	break;
-			case 3: Engine_ExpGeneratorInit( &NewExpGenerator, State->Release, State->SampleRate );	break;
+			case 0: Engine_GeneratorExpInit( &NewExpGenerator, State->Attack, State->SampleRate );	break;
+			case 1: Engine_GeneratorExpInit( &NewExpGenerator, State->Decay, State->SampleRate );	break;
+			case 3: Engine_GeneratorExpInit( &NewExpGenerator, State->Release, State->SampleRate );	break;
 		}
 
 	}
 
+	switch( NewPhase )
+	{
+		case 0: Out = NewAttackStart + (
+				( 1.0f  - NewAttackStart ) *
+				( 1.0f - Engine_GeneratorExpStep( &NewExpGenerator ) ) );				break; 	// start + ( 1 - start )( 1 - exp( -k )
+		case 1: Out = State->Sustain + (
+				( 1 - State->Sustain ) *
+				Engine_GeneratorExpStep( &NewExpGenerator ) );							break;	// sustain + ( 1 - sustain )exp( -k )
+		case 2: Out = State->Sustain;													break;	// sustain
+		case 3: Out = NewReleaseStart * Engine_GeneratorExpStep( &NewExpGenerator );	break;	// ReleaseStart * exp( -k )
+	}
 
 	State->Pressed = Pressed;
 	State->Phase = NewPhase;

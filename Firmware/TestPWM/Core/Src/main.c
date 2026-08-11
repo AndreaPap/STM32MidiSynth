@@ -54,13 +54,15 @@ static void MX_GPIO_Init(void);
 static void MX_TIM11_Init(void);
 /* USER CODE BEGIN PFP */
 
-Engine_TypeSineGeneratorState SineGenerator1;
-Engine_TypeSineGeneratorState SineGenerator2;
-Engine_TypeSawGeneratorState SawGenerator1;
-Engine_TypeSawGeneratorState SawGenerator2;
-Engine_TypeSawtoothGeneratorState SawtoothGenerator1;
-Engine_TypeSawtoothGeneratorState SawtoothGenerator2;
-Engine_TypeExpGeneratorState ExpGenerator;
+Engine_TypeStateGeneratorSine SineGenerator1;
+Engine_TypeStateGeneratorSine SineGenerator2;
+Engine_TypeStateGeneratorSaw SawGenerator1;
+Engine_TypeStateGeneratorSaw SawGenerator2;
+Engine_TypeStateGeneratorSawtooth SawtoothGenerator1;
+Engine_TypeStateGeneratorSawtooth SawtoothGenerator2;
+Engine_TypeStateGeneratorExp ExpGenerator;
+Engine_TypeStateGeneratorADSR ADSRGenerator;
+bool PressedTest;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -69,7 +71,7 @@ Engine_TypeExpGeneratorState ExpGenerator;
 {
 
 
-	float Sum = Engine_SineGeneratorStep( &SineGenerator );
+	float Sum = Engine_GeneratorSineStep( &SineGenerator );
 
 
 }*/
@@ -82,23 +84,26 @@ static float Normalized2PWM( float ValueNormalized )
 void TimerCallback( void )
 {
 	// leggi il file _it in fondo che spiega come collegare la callback anche se mx non la genera
-	float Exp = Engine_ExpGeneratorStep( &ExpGenerator );
+	/*float Exp = Engine_GeneratorExpStep( &ExpGenerator );
 	if( Exp < 0.045f )
 	{
-		Engine_ExpGeneratorInit( &ExpGenerator, 1.0f, 82031.25f );
-	}
-	//float Out = Engine_SineGeneratorStep( &SineGenerator1 );
+		Engine_GeneratorExpInit( &ExpGenerator, 1.0f, 82031.25f );
+	}*/
+	//float Out = Engine_GeneratorSineStep( &SineGenerator1 );
 	//TIM11->CCR1		= ( uint32_t )( Out * 1024 );
+	if( ADSRGenerator.Phase == 2 && ADSRGenerator.RelTime > 3.0f ){ PressedTest = false; }
+	else if( ADSRGenerator.Phase == 3 && ADSRGenerator.RelTime > 5.0f ){ PressedTest = true; }
+	//TIM11->CCR1 = ( uint32_t )( Engine_GeneratorADSRStep( &ADSRGenerator, PressedTest ) * 1024.0f );
 	TIM11->CCR1 	=
 			Normalized2PWM(
-				Exp * (
-						( 0.7f * Engine_SineGeneratorStep( &SineGenerator1 ) )  +
-						( 0.2f * Engine_SineGeneratorStep( &SineGenerator2 ) ) +
-						( 0.1f * Engine_SawtoothGeneratorStep( &SawtoothGenerator1 ) ) )
+					Engine_GeneratorADSRStep( &ADSRGenerator, PressedTest ) * (
+						( 0.7f * Engine_GeneratorSineStep( &SineGenerator1 ) )  +
+						( 0.2f * Engine_GeneratorSineStep( &SineGenerator2 ) ) +
+						( 0.1f * Engine_GeneratorSawtoothStep( &SawtoothGenerator1 ) ) )
 				);
-	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_SawGeneratorStep( &SawGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_SawGeneratorStep( &SawGenerator2 ) * 1024 ) ) ) / 2;
-	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator2 ) * 1024 ) ) ) / 2;
-	//TIM11->CCR1 	= ( uint32_t )( Engine_SawtoothGeneratorStep( &SawtoothGenerator ) * 1024 );
+	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_GeneratorSawStep( &SawGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_GeneratorSawStep( &SawGenerator2 ) * 1024 ) ) ) / 2;
+	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_GeneratorSawtoothStep( &SawtoothGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_GeneratorSawtoothStep( &SawtoothGenerator2 ) * 1024 ) ) ) / 2;
+	//TIM11->CCR1 	= ( uint32_t )( Engine_GeneratorSawtoothStep( &SawtoothGenerator ) * 1024 );
 	TIM11->SR		&=	0xFFFFFFFE;	// reset interrupt
 }
 /* USER CODE END 0 */
@@ -159,13 +164,15 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  Engine_SineGeneratorInit( &SineGenerator1, 440, 0.0, 82031.25f );
-  Engine_SineGeneratorInit( &SineGenerator2, 880, 0.2, 82031.25f );
-  //Engine_SawGeneratorInit( &SawGenerator1, 50, 0.0, 82031.25f );
-  //Engine_SawGeneratorInit( &SawGenerator2, 50, 0.5, 82031.25f );
-  Engine_SawtoothGeneratorInit( &SawtoothGenerator1, 220, 0.1, 82031.25f );
-  //Engine_SawtoothGeneratorInit( &SawtoothGenerator2, 440, 0.3, 82031.25f );
-  Engine_ExpGeneratorInit( &ExpGenerator, 1.0f, 82031.25f );
+  Engine_GeneratorSineInit( &SineGenerator1, 440, 0.0, SAMPLERATE );
+  Engine_GeneratorSineInit( &SineGenerator2, 880, 0.2, SAMPLERATE );
+  //Engine_GeneratorSawInit( &SawGenerator1, 50, 0.0, SAMPLERATE );
+  //Engine_GeneratorSawInit( &SawGenerator2, 50, 0.5, SAMPLERATE );
+  Engine_GeneratorSawtoothInit( &SawtoothGenerator1, 220, 0.1, SAMPLERATE );
+  //Engine_GeneratorSawtoothInit( &SawtoothGenerator2, 440, 0.3, SAMPLERATE );
+  Engine_GeneratorExpInit( &ExpGenerator, 1.0f, SAMPLERATE );
+  Engine_GeneratorADSRInit( &ADSRGenerator, 3.0f, 1.0f, 0.5f, 5.0f, SAMPLERATE );
+  PressedTest = true;
 
   while (1)
   {
