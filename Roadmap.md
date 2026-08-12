@@ -11,11 +11,12 @@
 - Introduci fase iniziale per generatori semplici ( OK )
 - Metti fase iniziale seno ( OK )
 - Generatore ADSR ( OK )
-- Filtro uscita C-R-C per hp e lp ( da fare )
+- Filtro uscita C-R-R-C per hp e lp ( ... )
 
 ## Post
 
 - Valutare finale direttamente in pwm con filtro digitale
+- Valutare forme d'onda con aliasing ridotto ( se serve )
 
 
 
