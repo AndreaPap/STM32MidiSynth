@@ -201,6 +201,9 @@ void SysTick_Handler(void)
 /* USER CODE BEGIN 1 */
 void TIM1_TRG_COM_TIM11_IRQHandler( void )
 {
-	TimerCallback();
+	if( (TIM11->SR & TIM_SR_UIF ) && ( TIM11->DIER & TIM_DIER_UIE ) )
+	{
+		TimerCallback();
+	}
 }
 /* USER CODE END 1 */

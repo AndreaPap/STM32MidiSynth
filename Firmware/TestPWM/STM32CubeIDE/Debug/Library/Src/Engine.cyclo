@@ -7,6 +7,8 @@
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:92:6:Engine_GeneratorSawtoothInit	1
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:99:7:Engine_GeneratorSawtoothStep	2
 /home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:111:6:Engine_GeneratorExpInit	1
-/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:118:7:Engine_GeneratorExpStep	2
-/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:130:6:Engine_GeneratorADSRInit	1
-/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:147:7:Engine_GeneratorADSRStep	18
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:118:7:Engine_GeneratorExpStep	1
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:130:6:Engine_GeneratorExpReset	1
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:137:6:Engine_GeneratorADSRInit	1
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:157:7:Engine_GeneratorADSRStep	16
+/home/andrea/Progetti/STM32MidiSynth/Firmware/Library/Src/Engine.c:238:6:Engine_GeneratorADSRReset	1

@@ -46,6 +46,31 @@ TIM_HandleTypeDef htim11;
 float Sine[ 128 ] = { 0.5f, 0.5245338f, 0.5490086f, 0.5733652f, 0.5975452f, 0.6214901f, 0.6451423f, 0.6684449f, 0.6913417f, 0.7137775f, 0.7356984f, 0.7570514f, 0.7777851f, 0.7978497f, 0.8171966f, 0.8357795f, 0.8535534f, 0.8704756f, 0.8865052f, 0.9016038f, 0.9157348f, 0.9288643f, 0.9409606f, 0.9519946f, 0.9619398f, 0.970772f, 0.9784702f, 0.9850156f, 0.9903926f, 0.9945883f, 0.9975924f, 0.9993977f, 1.0f, 0.9993977f, 0.9975924f, 0.9945883f, 0.9903926f, 0.9850156f, 0.9784702f, 0.970772f, 0.9619398f, 0.9519946f, 0.9409606f, 0.9288643f, 0.9157348f, 0.9016038f, 0.8865052f, 0.8704756f, 0.8535534f, 0.8357795f, 0.8171966f, 0.7978497f, 0.7777851f, 0.7570514f, 0.7356984f, 0.7137775f, 0.6913417f, 0.6684449f, 0.6451423f, 0.6214901f, 0.5975452f, 0.5733652f, 0.5490086f, 0.5245338f, 0.5f, 0.4754662f, 0.4509914f, 0.4266348f, 0.4024548f, 0.3785099f, 0.3548577f, 0.3315551f, 0.3086583f, 0.2862225f, 0.2643016f, 0.2429486f, 0.2222149f, 0.2021503f, 0.1828034f, 0.1642205f, 0.1464466f, 0.1295244f, 0.1134948f, 0.0983962f, 0.0842652f, 0.0711357f, 0.0590394f, 0.0480054f, 0.0380602f, 0.029228f, 0.0215298f, 0.0149844f, 0.0096074f, 0.0054117f, 0.0024076f, 0.0006023f, 0.0f, 0.0006023f, 0.0024076f, 0.0054117f, 0.0096074f, 0.0149844f, 0.0215298f, 0.029228f, 0.0380602f, 0.0480054f, 0.0590394f, 0.0711357f, 0.0842652f, 0.0983962f, 0.1134948f, 0.1295244f, 0.1464466f, 0.1642205f, 0.1828034f, 0.2021503f, 0.2222149f, 0.2429486f, 0.2643016f, 0.2862225f, 0.3086583f, 0.3315551f, 0.3548577f, 0.3785099f, 0.4024548f, 0.4266348f, 0.4509914f, 0.4754662f };
 float Saw[ 128 ] = { 0.0f, 0.015873f, 0.031746f, 0.047619f, 0.0634921f, 0.0793651f, 0.0952381f, 0.1111111f, 0.1269841f, 0.1428571f, 0.1587302f, 0.1746032f, 0.1904762f, 0.2063492f, 0.2222222f, 0.2380952f, 0.2539683f, 0.2698413f, 0.2857143f, 0.3015873f, 0.3174603f, 0.3333333f, 0.3492063f, 0.3650794f, 0.3809524f, 0.3968254f, 0.4126984f, 0.4285714f, 0.4444444f, 0.4603175f, 0.4761905f, 0.4920635f, 0.5079365f, 0.5238095f, 0.5396825f, 0.5555556f, 0.5714286f, 0.5873016f, 0.6031746f, 0.6190476f, 0.6349206f, 0.6507937f, 0.6666667f, 0.6825397f, 0.6984127f, 0.7142857f, 0.7301587f, 0.7460317f, 0.7619048f, 0.7777778f, 0.7936508f, 0.8095238f, 0.8253968f, 0.8412698f, 0.8571429f, 0.8730159f, 0.8888889f, 0.9047619f, 0.9206349f, 0.9365079f, 0.952381f, 0.968254f, 0.984127f, 1.0f, 0.9846154f, 0.9692308f, 0.9538462f, 0.9384615f, 0.9230769f, 0.9076923f, 0.8923077f, 0.8769231f, 0.8615385f, 0.8461538f, 0.8307692f, 0.8153846f, 0.8f, 0.7846154f, 0.7692308f, 0.7538462f, 0.7384615f, 0.7230769f, 0.7076923f, 0.6923077f, 0.6769231f, 0.6615385f, 0.6461538f, 0.6307692f, 0.6153846f, 0.6f, 0.5846154f, 0.5692308f, 0.5538462f, 0.5384615f, 0.5230769f, 0.5076923f, 0.4923077f, 0.4769231f, 0.4615385f, 0.4461538f, 0.4307692f, 0.4153846f, 0.4f, 0.3846154f, 0.3692308f, 0.3538462f, 0.3384615f, 0.3230769f, 0.3076923f, 0.2923077f, 0.2769231f, 0.2615385f, 0.2461538f, 0.2307692f, 0.2153846f, 0.2f, 0.1846154f, 0.1692308f, 0.1538462f, 0.1384615f, 0.1230769f, 0.1076923f, 0.0923077f, 0.0769231f, 0.0615385f, 0.0461538f, 0.0307692f, 0.0153846f };
 float Sawtooth[ 128 ] = { 0.0f, 0.007874f, 0.015748f, 0.023622f, 0.0314961f, 0.0393701f, 0.0472441f, 0.0551181f, 0.0629921f, 0.0708661f, 0.0787402f, 0.0866142f, 0.0944882f, 0.1023622f, 0.1102362f, 0.1181102f, 0.1259843f, 0.1338583f, 0.1417323f, 0.1496063f, 0.1574803f, 0.1653543f, 0.1732283f, 0.1811024f, 0.1889764f, 0.1968504f, 0.2047244f, 0.2125984f, 0.2204724f, 0.2283465f, 0.2362205f, 0.2440945f, 0.2519685f, 0.2598425f, 0.2677165f, 0.2755906f, 0.2834646f, 0.2913386f, 0.2992126f, 0.3070866f, 0.3149606f, 0.3228346f, 0.3307087f, 0.3385827f, 0.3464567f, 0.3543307f, 0.3622047f, 0.3700787f, 0.3779528f, 0.3858268f, 0.3937008f, 0.4015748f, 0.4094488f, 0.4173228f, 0.4251969f, 0.4330709f, 0.4409449f, 0.4488189f, 0.4566929f, 0.4645669f, 0.4724409f, 0.480315f, 0.488189f, 0.496063f, 0.503937f, 0.511811f, 0.519685f, 0.5275591f, 0.5354331f, 0.5433071f, 0.5511811f, 0.5590551f, 0.5669291f, 0.5748031f, 0.5826772f, 0.5905512f, 0.5984252f, 0.6062992f, 0.6141732f, 0.6220472f, 0.6299213f, 0.6377953f, 0.6456693f, 0.6535433f, 0.6614173f, 0.6692913f, 0.6771654f, 0.6850394f, 0.6929134f, 0.7007874f, 0.7086614f, 0.7165354f, 0.7244094f, 0.7322835f, 0.7401575f, 0.7480315f, 0.7559055f, 0.7637795f, 0.7716535f, 0.7795276f, 0.7874016f, 0.7952756f, 0.8031496f, 0.8110236f, 0.8188976f, 0.8267717f, 0.8346457f, 0.8425197f, 0.8503937f, 0.8582677f, 0.8661417f, 0.8740157f, 0.8818898f, 0.8897638f, 0.8976378f, 0.9055118f, 0.9133858f, 0.9212598f, 0.9291339f, 0.9370079f, 0.9448819f, 0.9527559f, 0.9606299f, 0.9685039f, 0.976378f, 0.984252f, 0.992126f, 1.0f };
+
+float Out;
+float StateTime = 0.0f;
+float NewTime = 0.0f;
+volatile bool Step;
+volatile uint32_t Overrun = 0;
+
+Engine_TypeStateGeneratorADSR FastADSR;
+Engine_TypeStateGeneratorADSR SlowADSR;
+
+Engine_TypeStateGeneratorSaw SawC;
+Engine_TypeStateGeneratorSaw SawG;
+Engine_TypeStateGeneratorSaw SawC1;
+Engine_TypeStateGeneratorSaw SawE;
+Engine_TypeStateGeneratorSaw SawF;
+Engine_TypeStateGeneratorSaw SawA;
+
+Engine_TypeStateGeneratorSawtooth LeadC;
+Engine_TypeStateGeneratorSawtooth LeadD;
+Engine_TypeStateGeneratorSawtooth LeadE;
+Engine_TypeStateGeneratorSawtooth LeadF;
+Engine_TypeStateGeneratorSawtooth LeadG;
+
+
+//Engine_TypeStateGeneratorSawtooth Sawtooth1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -54,15 +79,7 @@ static void MX_GPIO_Init(void);
 static void MX_TIM11_Init(void);
 /* USER CODE BEGIN PFP */
 
-Engine_TypeStateGeneratorSine SineGenerator1;
-Engine_TypeStateGeneratorSine SineGenerator2;
-Engine_TypeStateGeneratorSaw SawGenerator1;
-Engine_TypeStateGeneratorSaw SawGenerator2;
-Engine_TypeStateGeneratorSawtooth SawtoothGenerator1;
-Engine_TypeStateGeneratorSawtooth SawtoothGenerator2;
-Engine_TypeStateGeneratorExp ExpGenerator;
-Engine_TypeStateGeneratorADSR ADSRGenerator;
-bool PressedTest;
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -75,7 +92,7 @@ bool PressedTest;
 
 
 }*/
-static float Normalized2PWM( float ValueNormalized )
+static uint32_t Normalized2PWM( float ValueNormalized )
 {
 	// da +- 1 a 0 - 1024
 	return ( uint32_t )( ( ValueNormalized + 1.0f ) * 512.0f );
@@ -84,27 +101,9 @@ static float Normalized2PWM( float ValueNormalized )
 void TimerCallback( void )
 {
 	// leggi il file _it in fondo che spiega come collegare la callback anche se mx non la genera
-	/*float Exp = Engine_GeneratorExpStep( &ExpGenerator );
-	if( Exp < 0.045f )
-	{
-		Engine_GeneratorExpInit( &ExpGenerator, 1.0f, 82031.25f );
-	}*/
-	//float Out = Engine_GeneratorSineStep( &SineGenerator1 );
-	//TIM11->CCR1		= ( uint32_t )( Out * 1024 );
-	if( ADSRGenerator.Phase == 2 && ADSRGenerator.RelTime > 3.0f ){ PressedTest = false; }
-	else if( ADSRGenerator.Phase == 3 && ADSRGenerator.RelTime > 5.0f ){ PressedTest = true; }
-	//TIM11->CCR1 = ( uint32_t )( Engine_GeneratorADSRStep( &ADSRGenerator, PressedTest ) * 1024.0f );
-	TIM11->CCR1 	=
-			Normalized2PWM(
-					Engine_GeneratorADSRStep( &ADSRGenerator, PressedTest ) * (
-						( 0.7f * Engine_GeneratorSineStep( &SineGenerator1 ) )  +
-						( 0.2f * Engine_GeneratorSineStep( &SineGenerator2 ) ) +
-						( 0.1f * Engine_GeneratorSawtoothStep( &SawtoothGenerator1 ) ) )
-				);
-	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_GeneratorSawStep( &SawGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_GeneratorSawStep( &SawGenerator2 ) * 1024 ) ) ) / 2;
-	//TIM11->CCR1 	= ( ( ( uint32_t )( Engine_GeneratorSawtoothStep( &SawtoothGenerator1 ) * 1024 ) ) + ( ( uint32_t )( Engine_GeneratorSawtoothStep( &SawtoothGenerator2 ) * 1024 ) ) ) / 2;
-	//TIM11->CCR1 	= ( uint32_t )( Engine_GeneratorSawtoothStep( &SawtoothGenerator ) * 1024 );
-	TIM11->SR		&=	0xFFFFFFFE;	// reset interrupt
+	if( Step ){ Overrun++; }
+	Step = true;
+	TIM11->SR		&=	0xFFFFFFFE;	// reset interrupt*/
 }
 /* USER CODE END 0 */
 
@@ -126,6 +125,25 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
+	  StateTime = 0.0f;
+	  NewTime = 0.0f;
+	  Step = false;
+
+	  Engine_GeneratorADSRInit( &SlowADSR, 1.0f, 1.0f, 0.75f, 3.0f, SAMPLERATE );
+	  Engine_GeneratorADSRInit( &FastADSR, 0.1f, 1.0f, 0.5f, 0.3f, SAMPLERATE );
+
+	  Engine_GeneratorSawInit( &SawC, Notes[ 0 ], 0.0f, SAMPLERATE );
+	  Engine_GeneratorSawInit( &SawG, Notes[ 7 ], 0.2f, SAMPLERATE );
+	  Engine_GeneratorSawInit( &SawC1, Notes[ 0 ] * 2.0f, 0.3f, SAMPLERATE );
+	  Engine_GeneratorSawInit( &SawE, Notes[ 4 ], 0.1f, SAMPLERATE );
+	  Engine_GeneratorSawInit( &SawF, Notes[ 5 ], 0.1f, SAMPLERATE );
+	  Engine_GeneratorSawInit( &SawA, Notes[ 9 ], 0.1f, SAMPLERATE );
+
+	  Engine_GeneratorSawtoothInit( &LeadC, Notes[ 0 ] * 2.0f, 0.1f, SAMPLERATE );
+	  Engine_GeneratorSawtoothInit( &LeadD, Notes[ 2 ] * 2.0f, 0.3f, SAMPLERATE );
+	  Engine_GeneratorSawtoothInit( &LeadE, Notes[ 4 ] * 2.0f, 0.15f, SAMPLERATE );
+	  Engine_GeneratorSawtoothInit( &LeadF, Notes[ 5 ] * 2.0f, 0.2f, SAMPLERATE );
+	  Engine_GeneratorSawtoothInit( &LeadG, Notes[ 7 ] * 2.0f, 0.3f, SAMPLERATE );
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -159,28 +177,147 @@ int main(void)
   TIM11->CR1   	|= 	0x01;        	// Avvia il timer (CEN)
 
 
-  /* USER CODE END 2 */
+  /* USER CODE END 2Engine_TypeStateGeneratorSaw SawC;
+  Engine_TypeStateGeneratorSaw SawG;
+  Engine_TypeStateGeneratorSaw SawC1;
+  Engine_TypeStateGeneratorSaw SawE;
+  Engine_TypeStateGeneratorSaw SawF;
+  Engine_TypeStateGeneratorSaw SawA;
+  Engine_TypeStateGeneratorSaw SawC; */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  Engine_GeneratorSineInit( &SineGenerator1, 440, 0.0, SAMPLERATE );
-  Engine_GeneratorSineInit( &SineGenerator2, 880, 0.2, SAMPLERATE );
-  //Engine_GeneratorSawInit( &SawGenerator1, 50, 0.0, SAMPLERATE );
-  //Engine_GeneratorSawInit( &SawGenerator2, 50, 0.5, SAMPLERATE );
-  Engine_GeneratorSawtoothInit( &SawtoothGenerator1, 220, 0.1, SAMPLERATE );
-  //Engine_GeneratorSawtoothInit( &SawtoothGenerator2, 440, 0.3, SAMPLERATE );
-  Engine_GeneratorExpInit( &ExpGenerator, 1.0f, SAMPLERATE );
-  Engine_GeneratorADSRInit( &ADSRGenerator, 3.0f, 1.0f, 0.5f, 5.0f, SAMPLERATE );
-  PressedTest = true;
+
 
   while (1)
   {
+	  if( Step )
+	  {
+		  Step = false;
+		  NewTime = StateTime + ( 1.0f / SAMPLERATE );
+		  Out = 0.0f;
 
-	  //
-	  //HAL_GPIO_TogglePin( LED_GPIO_Port, LED_Pin );
-	  //TIM11->CCR1 = TIM11->CCR1 == 255 ? 0 : TIM11->CCR1 + 1;
-	  //HAL_Delay( 10 );
+		  // ACCORDI
+		  if( NewTime >= 0.0f && NewTime < 8.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &SlowADSR, NewTime < ( 8.0f * Fourth ) - ( Fourth / 4.0f ) ) * (
+					Engine_GeneratorSawStep( &SawC ) + Engine_GeneratorSawStep( &SawG ) + Engine_GeneratorSawStep( &SawC1 )
+					) / 12.0f;
+		  }
+		  else if( NewTime >= 8.0f * Fourth && NewTime < 14.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &SlowADSR, NewTime < ( 14.0f * Fourth ) - ( Fourth / 4.0f ) ) * (
+					  Engine_GeneratorSawStep( &SawC ) + Engine_GeneratorSawStep( &SawE ) + Engine_GeneratorSawStep( &SawG )
+			  	  	  ) / 8.0f;
+		  }
+		  else if( NewTime >= 14.0f * Fourth && NewTime < 16.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &SlowADSR, NewTime < ( 16.0f * Fourth ) - ( Fourth / 2.0f ) ) * (
+					  Engine_GeneratorSawStep( &SawC ) + Engine_GeneratorSawStep( &SawF ) + Engine_GeneratorSawStep( &SawA )
+						) / 6.0f;
+		  }
+
+		  // LEAD
+		  if( NewTime < 2.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.25f;
+		  }
+		  else if( NewTime >= 2.0f * Fourth && NewTime < 2.5f * Fourth  )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.25f;
+		  }
+		  else if( NewTime >= 2.5f * Fourth  && NewTime < 3.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.25f;
+		  }
+		  else if( NewTime >= 3.0f * Fourth && NewTime < 3.5f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.25f;
+		  }
+		  else if( NewTime >= 3.5f * Fourth && NewTime < 5.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.25f;
+		  }
+		  else if( NewTime >= 5.0f * Fourth && NewTime < 6.5f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadG ) * 0.25f;
+		  }
+		  else if( NewTime >= 6.5f * Fourth && NewTime < 8.5f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadG ) * 0.25f;
+		  }
+		  else if( NewTime >= 8.5f * Fourth && NewTime < 8.75f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.35f;
+		  }
+		  else if( NewTime >= 8.75f * Fourth && NewTime < 9.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.35f;
+		  }
+		  else if( NewTime >= 9.0f * Fourth && NewTime < 9.5f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.35f;
+		  }
+		  else if( NewTime >= 9.5f * Fourth && NewTime < 10.25f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.35f;
+		  }
+		  else if( NewTime >= 10.25f * Fourth && NewTime < 10.45f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.35f;
+		  }
+		  else if( NewTime >= 10.45f * Fourth && NewTime < 10.5 * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.35f;
+		  }
+		  else if( NewTime >= 10.5f * Fourth && NewTime < 12.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadG ) * 0.35f;
+		  }
+		  else if( NewTime >= 12.0f * Fourth && NewTime < 12.75f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadG ) * 0.35f;
+		  }
+		  else if( NewTime >= 12.75f * Fourth && NewTime < 12.95f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.35f;
+		  }
+		  else if( NewTime >= 12.95f * Fourth && NewTime < 13.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.35f;
+		  }
+		  else if( NewTime >= 13.0f * Fourth && NewTime < 13.75f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadE ) * 0.5f;
+		  }
+		  else if( NewTime >= 13.75f * Fourth && NewTime < 14.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadE ) * 0.5f;
+		  }
+		  else if( NewTime >= 14.0f * Fourth && NewTime < 15.45f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadD ) * 0.5f;
+		  }
+		  else if( NewTime >= 15.45f * Fourth && NewTime < 15.5f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, false ) * Engine_GeneratorSawtoothStep( &LeadD ) * 0.5f;
+		  }
+		  else if( NewTime >= 15.5f * Fourth && NewTime < 16.0f * Fourth )
+		  {
+			  Out += Engine_GeneratorADSRStep( &FastADSR, true ) * Engine_GeneratorSawtoothStep( &LeadC ) * 0.2f;
+		  }
+
+
+		  if( NewTime >= 16.0f * Fourth )
+		  {
+			  NewTime -= 16.0f * Fourth;
+		  }
+
+		  TIM11->CCR1 = Normalized2PWM( Out );
+
+		  StateTime = NewTime;
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -81,7 +81,7 @@ float Engine_GeneratorSawStep( Engine_TypeStateGeneratorSaw* State )
 		NewUp = !NewUp;
 	}
 
-	float Out = ( NewUp ? NewRelTime / State->HalfPeriod : 1.0f - ( NewRelTime / State->HalfPeriod ) ) - 0.5f;
+	float Out = ( ( NewUp ? NewRelTime / State->HalfPeriod : 1.0f - ( NewRelTime / State->HalfPeriod ) ) * 2.0f ) - 1.0f;
 
 	State->RelTime = NewRelTime;
 	State->Up = NewUp;
@@ -101,7 +101,7 @@ float Engine_GeneratorSawtoothStep( Engine_TypeStateGeneratorSawtooth* State )
 	float NewRelTime = State->RelTime + State->Step;
 
 	if( NewRelTime >= State->Period ){ NewRelTime -= State->Period; }
-	float Out = ( NewRelTime / State->Period ) - 0.5f;
+	float Out = ( ( NewRelTime / State->Period ) * 2.0f ) - 1.0f;
 
 	State->RelTime = NewRelTime;
 
@@ -127,20 +127,30 @@ float Engine_GeneratorExpStep( Engine_TypeStateGeneratorExp* State )
 	return Out;
 }
 
+void Engine_GeneratorExpReset( Engine_TypeStateGeneratorExp* State )
+{
+	State->Init = true;
+	State->Y1 = 0.0f;
+}
+
+
 void Engine_GeneratorADSRInit( Engine_TypeStateGeneratorADSR* State, float Attack, float Decay, float Sustain, float Release, float SampleRate )
 {
-	State->Pressed = true;
+	State->Pressed = false;
 	State->Y1 = 0.0f;
 	State->Phase = 0;
 	State->RelTime = 0.0f;
-	State->Step = 1 / SampleRate;
+	State->Step = 1.0f / SampleRate;
 	State->SampleRate = SampleRate;
-	Engine_GeneratorExpInit( &State->ExpGenerator, Attack, SampleRate );
+	Engine_GeneratorExpInit( &State->ExpGeneratorAttack, Attack, SampleRate );
+	Engine_GeneratorExpInit( &State->ExpGeneratorDecay, Decay, SampleRate );
+	Engine_GeneratorExpInit( &State->ExpGeneratorRelease, Release, SampleRate );
 	State->Attack = Attack;
 	State->Decay = Decay;
 	State->Sustain = Sustain;
 	State->Release = Release;
 	State->AttackStart = 0.0f;
+	State->DecayStart = 0.0f;
 	State->ReleaseStart = 0.0f;
 }
 
@@ -149,9 +159,12 @@ float Engine_GeneratorADSRStep( Engine_TypeStateGeneratorADSR* State, bool Press
 	uint8_t NewPhase = State->Phase;
 	float NewRelTime = State->RelTime;
 	float NewAttackStart = State->AttackStart;
+	float NewDecayStart = State->DecayStart;
 	float NewReleaseStart = State->ReleaseStart;
 	float Out = 0.0f;
-	Engine_TypeStateGeneratorExp NewExpGenerator = State->ExpGenerator;
+	Engine_TypeStateGeneratorExp NewExpGeneratorAttack = State->ExpGeneratorAttack;
+	Engine_TypeStateGeneratorExp NewExpGeneratorDecay = State->ExpGeneratorDecay;
+	Engine_TypeStateGeneratorExp NewExpGeneratorRelease = State->ExpGeneratorRelease;
 
 	if( Pressed && !State->Pressed ) 		// da fase generica a attack per pressione
 	{
@@ -165,19 +178,20 @@ float Engine_GeneratorADSRStep( Engine_TypeStateGeneratorADSR* State, bool Press
 		NewRelTime = 0.0f;
 		NewReleaseStart = State->Y1;
 	}
-	else									// variazione per avanzamento nel tempo
+	else if( Pressed || NewPhase == 3 )						// variazione per avanzamento nel tempo
 	{
 		NewRelTime += State->Step;
 
 		if( State->Phase == 0 && NewRelTime > State->Attack ) // da attacco a decay
 		{
 			NewPhase = 1;
+			NewDecayStart = State->Y1;
 			NewRelTime -= State->Attack;
 		}
 		else if( State->Phase == 1 && NewRelTime > State->Decay ) // da decay a sustain
 		{
 			NewPhase = 2;
-			NewRelTime -= State->Sustain;
+			NewRelTime -= State->Decay;
 		}
 	}
 
@@ -185,32 +199,52 @@ float Engine_GeneratorADSRStep( Engine_TypeStateGeneratorADSR* State, bool Press
 	{
 		switch ( NewPhase )
 		{
-			case 0: Engine_GeneratorExpInit( &NewExpGenerator, State->Attack, State->SampleRate );	break;
-			case 1: Engine_GeneratorExpInit( &NewExpGenerator, State->Decay, State->SampleRate );	break;
-			case 3: Engine_GeneratorExpInit( &NewExpGenerator, State->Release, State->SampleRate );	break;
+			case 0: Engine_GeneratorExpReset( &NewExpGeneratorAttack );	break;
+			case 1: Engine_GeneratorExpReset( &NewExpGeneratorDecay );	break;
+			case 3: Engine_GeneratorExpReset( &NewExpGeneratorRelease );break;
 		}
 
 	}
 
-	switch( NewPhase )
+	if( Pressed || NewPhase == 3 )
 	{
-		case 0: Out = NewAttackStart + (
-				( 1.0f  - NewAttackStart ) *
-				( 1.0f - Engine_GeneratorExpStep( &NewExpGenerator ) ) );				break; 	// start + ( 1 - start )( 1 - exp( -k )
-		case 1: Out = State->Sustain + (
-				( 1 - State->Sustain ) *
-				Engine_GeneratorExpStep( &NewExpGenerator ) );							break;	// sustain + ( 1 - sustain )exp( -k )
-		case 2: Out = State->Sustain;													break;	// sustain
-		case 3: Out = NewReleaseStart * Engine_GeneratorExpStep( &NewExpGenerator );	break;	// ReleaseStart * exp( -k )
+		switch( NewPhase )
+		{
+			case 0: Out = NewAttackStart + (
+					( 1.0f  - NewAttackStart ) *
+					( 1.0f - Engine_GeneratorExpStep( &NewExpGeneratorAttack ) ) );				break; 	// start + ( 1 - start )( 1 - exp( -k )
+			case 1: Out = State->Sustain + (
+					( NewDecayStart - State->Sustain ) *
+					Engine_GeneratorExpStep( &NewExpGeneratorDecay ) );							break;	// sustain + ( start - sustain )exp( -k )
+			case 2: Out = State->Sustain;														break;	// sustain
+			case 3: Out = NewReleaseStart * Engine_GeneratorExpStep( &NewExpGeneratorRelease );	break;	// ReleaseStart * exp( -k )
+		}
 	}
 
 	State->Pressed = Pressed;
 	State->Phase = NewPhase;
 	State->RelTime = NewRelTime;
-	State->ExpGenerator = NewExpGenerator;
+	State->ExpGeneratorAttack = NewExpGeneratorAttack;
+	State->ExpGeneratorDecay = NewExpGeneratorDecay;
+	State->ExpGeneratorRelease = NewExpGeneratorRelease;
 	State->Y1 = Out;
 	State->AttackStart = NewAttackStart;
+	State->DecayStart = NewDecayStart;
 	State->ReleaseStart = NewReleaseStart;
 
 	return Out;
+}
+
+void Engine_GeneratorADSRReset( Engine_TypeStateGeneratorADSR* State )
+{
+	State->Pressed = false;
+	State->Y1 = 0.0f;
+	State->Phase = 0;
+	State->RelTime = 0.0f;
+	Engine_GeneratorExpReset( &State->ExpGeneratorAttack );
+	Engine_GeneratorExpReset( &State->ExpGeneratorDecay );
+	Engine_GeneratorExpReset( &State->ExpGeneratorRelease );
+	State->AttackStart = 0.0f;
+	State->DecayStart = 0.0f;
+	State->ReleaseStart = 0.0f;
 }
