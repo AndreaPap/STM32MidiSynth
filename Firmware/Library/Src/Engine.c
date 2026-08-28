@@ -60,6 +60,28 @@ float Engine_GeneratorSineStep( Engine_TypeStateGeneratorSine* State )
 	return Y;
 }
 
+void Engine_GeneratorFastSineInit( Engine_TypeStateGeneratorFastSine* State, float Frequency, float InitialPhase, float SampleRate )
+{
+	/*
+	 * F / Fs = Rad / 2 pi -> Rad = 2 pi F / Fs, T / P = Phi / 2 * pi -> Phi = 2 * pi * T / P = 2 * pi * T * F = 2 * pi * n * F / Fs
+	 * step inizia a calcolare da y[ 0 ], se impulso a x[ -2 ] step indipendente da ingresso
+	 */
+
+	float W = 2.0f * PI * Frequency / SampleRate;
+	float Phi = -( 2.0f * PI * 2.0f * Frequency / SampleRate) + InitialPhase;
+	State->B1 = 2.0f * cosf( W );
+	State->Y2 = sinf( Phi ); // y[ -2 ] = sin( phi )x[ -2 ]
+	State->Y1 = ( State->B1 *State->Y2 ) + sinf( W - Phi ); // conta y[ -1 ] = b1y[ -1 ] + sin( w - phi )x[ -2 ]
+}
+
+float Engine_GeneratorFastSineStep( Engine_TypeStateGeneratorFastSine* State )
+{
+	float Out = ( State->B1 * State->Y1 ) - State->Y2;
+	State->Y2 = State->Y1;
+	State->Y1 = Out;
+	return Out;
+}
+
 void Engine_GeneratorSawInit( Engine_TypeStateGeneratorSaw* State, float Frequency, float InitialPhase, float SampleRate )
 {
 	float HalfPeriod = 1.0f / ( 2.0f * Frequency );

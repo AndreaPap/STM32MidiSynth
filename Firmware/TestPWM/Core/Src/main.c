@@ -69,6 +69,7 @@ Engine_TypeStateGeneratorSawtooth LeadE;
 Engine_TypeStateGeneratorSawtooth LeadF;
 Engine_TypeStateGeneratorSawtooth LeadG;
 
+Engine_TypeStateGeneratorFastSine FastSine;
 
 //Engine_TypeStateGeneratorSawtooth Sawtooth1;
 /* USER CODE END PV */
@@ -144,6 +145,8 @@ int main(void)
 	  Engine_GeneratorSawtoothInit( &LeadE, Notes[ 4 ] * 2.0f, 0.15f, SAMPLERATE );
 	  Engine_GeneratorSawtoothInit( &LeadF, Notes[ 5 ] * 2.0f, 0.2f, SAMPLERATE );
 	  Engine_GeneratorSawtoothInit( &LeadG, Notes[ 7 ] * 2.0f, 0.3f, SAMPLERATE );
+
+	  Engine_GeneratorFastSineInit( &FastSine, 20, 0.0f, SAMPLERATE );
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -195,6 +198,10 @@ int main(void)
 	  if( Step )
 	  {
 		  Step = false;
+		  Out = Engine_GeneratorFastSineStep( &FastSine );
+		  //Out = Engine_GeneratorSineStep( &NormSine );
+		  //Out = Engine_GeneratorSawStep(&SawC);
+		  /*
 		  NewTime = StateTime + ( 1.0f / SAMPLERATE );
 		  Out = 0.0f;
 
@@ -313,10 +320,10 @@ int main(void)
 		  {
 			  NewTime -= 16.0f * Fourth;
 		  }
-
+			*/
 		  TIM11->CCR1 = Normalized2PWM( Out );
 
-		  StateTime = NewTime;
+		  //StateTime = NewTime;
 	  }
     /* USER CODE END WHILE */
 

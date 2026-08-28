@@ -65,6 +65,17 @@ void Engine_GeneratorSineInit( Engine_TypeStateGeneratorSine* State, float Frequ
 float Engine_GeneratorSineStep( Engine_TypeStateGeneratorSine* State );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+typedef struct
+{
+	float B1;
+	float Y1;
+	float Y2;
+}
+Engine_TypeStateGeneratorFastSine;
+
+void Engine_GeneratorFastSineInit( Engine_TypeStateGeneratorFastSine* State, float Frequency, float InitialPhase, float SampleRate );
+float Engine_GeneratorFastSineStep( Engine_TypeStateGeneratorFastSine* State );
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct
 {
