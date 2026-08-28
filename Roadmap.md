@@ -11,7 +11,10 @@
 - Introduci fase iniziale per generatori semplici ( OK )
 - Metti fase iniziale seno ( OK )
 - Generatore ADSR ( OK )
-- Filtro uscita C-R-R-C per hp e lp ( ... )
+- Filtro uscita C-R-R-C per hp e lp ( OK )
+- Generatore sinusoidale ottimizzato ( OK )
+- Generatori senza aliasing ad armoniche limitate
+- Driver midi
 
 ## Post
 
