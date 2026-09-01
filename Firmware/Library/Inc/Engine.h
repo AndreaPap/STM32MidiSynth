@@ -8,11 +8,14 @@
 #ifndef LIBRARY_INC_ENGINE_H_
 #define LIBRARY_INC_ENGINE_H_
 
-#define PI	3.1415927f
+#define PI			3.1415927f
+#define HALF_PI		1.5707963f
+#define FOUR_PI		12.5663706f
 
 #include "stdint.h"
 #include "math.h"
 #include "stdbool.h"
+#include "SineTable.h"
 
 static const float Fourth = 60.0f / 95.0f;
 static const float Note = 277.18f;//261.63f;
@@ -73,7 +76,7 @@ typedef struct
 }
 Engine_TypeStateGeneratorFastSine;
 
-void Engine_GeneratorFastSineInit( Engine_TypeStateGeneratorFastSine* State, float Frequency, float InitialPhase, float SampleRate );
+void Engine_GeneratorFastSineInit( Engine_TypeStateGeneratorFastSine* State, float Frequency, float InitialPhase, float SampleTime );
 float Engine_GeneratorFastSineStep( Engine_TypeStateGeneratorFastSine* State );
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

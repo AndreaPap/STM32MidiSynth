@@ -37,6 +37,11 @@
 			<location>/home/andrea/Progetti/STM32MidiSynth/Firmware/Library</location>
 		</link>
 		<link>
+			<name>SineTable</name>
+			<type>2</type>
+			<location>/home/andrea/Progetti/STM32MidiSynth/Tool/SineTable</location>
+		</link>
+		<link>
 			<name>TestPWM.ioc</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/TestPWM.ioc</locationURI>
